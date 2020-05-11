@@ -1,6 +1,6 @@
-For a new report click `use this template` on github.com. Give it a title with the report number.
+# FF13: Causality for Machine Learning
 
-# Dev
+## Dev
 
 Report repository template -- we use markdown now. Write markdown in the `src` directory. See `src/00a-example.md` for how to format.
 
@@ -11,7 +11,7 @@ npm install
 npm run dev
 ```
 
-# Deploy
+## Deploy
 
 To deploy you can clone the repo make sure you have nodejs and NPM installed and do:
 
