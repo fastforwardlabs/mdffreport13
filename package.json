@@ -1,0 +1,28 @@
+{
+  "name": "md-ff12",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "node build_html.js",
+    "dev": "nodemon -w src -w build_html.js -e md,js -V build_html.js & reload -d out -v -p 3000",
+    "deploy": "node build_html.js && git-directory-deploy --directory out --branch gh-pages"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "markdown-it": "^10.0.0",
+    "markdown-it-anchor": "^5.2.5",
+    "markdown-it-footnote": "^3.0.2",
+    "markdown-it-implicit-figures": "^0.9.0",
+    "markdown-it-table-of-contents": "^0.4.4",
+    "markdown-it-container": "^2.0.0"
+  },
+  "devDependencies": {
+    "fs-extra": "^8.1.0",
+    "git-directory-deploy": "^1.5.1",
+    "nodemon": "^1.19.4",
+    "reload": "^3.0.3"
+  }
+}
