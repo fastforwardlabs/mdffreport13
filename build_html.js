@@ -525,7 +525,7 @@ function makeJS() {
 }
 
 function makeHead() {
-  let title = 'Deep Learning for Anomaly Detection';
+  let title = 'Causality for Machine Learning';
   let description = 'TK';
   return `<head>
     <meta charset="utf-8" />
