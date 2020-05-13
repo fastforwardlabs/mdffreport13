@@ -1,64 +1,34 @@
-let fs = require('fs-extra');
-let path = require('path');
-let md = require('markdown-it')({ typographer: true });
-var implicitFigures = require('markdown-it-implicit-figures');
+let fs = require('fs-extra')
+let path = require('path')
+let md = require('markdown-it')({ typographer: true, html: true })
+var implicitFigures = require('markdown-it-implicit-figures')
 
-let deploy_location = process.argv[2];
+let deploy_location = process.argv[2]
 
-let line = 28;
-let lq = line / 4;
-let bf = 5 / 8;
-let hf = 6 / 8;
+let line = 28
+let lq = line / 4
+let bf = 5 / 8
+let hf = 6 / 8
 
-let rfs = bf * line;
-let lh = 1 / bf;
-let rlh = line;
+let rfs = bf * line
+let lh = 1 / bf
+let rlh = line
 
-// Remember old renderer, if overridden, or proxy to default renderer
-var defaultRender =
-  md.renderer.rules.link_open ||
-  function(tokens, idx, options, env, self) {
-    return self.renderToken(tokens, idx, options);
-  };
-
-// md.renderer.rules.link_open = function(tokens, idx, options, env, self) {
-//   var aIndex = tokens[idx].attrIndex('target');
-//   if (aIndex < 0) {
-//     tokens[idx].attrPush(['target', '_blank']);
-//   } else {
-//     tokens[idx].attrs[aIndex][1] = '_blank';
-//   }
-//   return defaultRender(tokens, idx, options, env, self);
-// };
-
-md.use(require('markdown-it-anchor'));
+md.use(require('markdown-it-anchor'))
 md.use(require('markdown-it-table-of-contents'), {
-  includeLevel: [2, 3, 4],
+  includeLevel: [2, 3],
   containerHeaderHtml: `<div id="toc-header" style="display: flex; font-weight: bold; text-transform: uppercase;">
      <div><button id="toggle_contents" style="padding-left: 0.5ch; padding-right: 0.5ch; cursor: pointer; position: relative; top: -1px;">☰</button><span id="contents-label" style="margin-left: 0;"> Contents</span></div>
   </div>`,
-});
-let custom_container = require('markdown-it-container');
-md.use(custom_container, 'info', {});
-md.use(require('markdown-it-footnote'));
+})
+md.use(require('markdown-it-container'), 'info', {})
+md.use(require('markdown-it-footnote'))
 md.use(implicitFigures, {
   dataType: false, // <figure data-type="image">, default: false
   figcaption: true, // <figcaption>alternative text</figcaption>, default: false
   tabindex: false, // <figure tabindex="1+n">..., default: false
   link: false, // <a href="img.png"><img src="img.png"></a>, default: false
-});
-
-let svg = `<svg width="${line}" height="${line}" version="1.1" xmlns="http://www.w3.org/2000/svg">
-  <line x1="0" y1="0.5" x2="${line}" y2="0.5" stroke="lightblue" stroke-width="1"/>
-  <line x1="0" y1="${lq + 0.5}" x2="${line}" y2="${lq +
-  0.5}" stroke="lightblue" stroke-width="1"/>
-  <line x1="0" y1="${lq * 2 + 0.5}" x2="${line}" y2="${lq * 2 +
-  0.5}" stroke="lightblue" stroke-width="1"/>
-  <line x1="0" y1="${lq * 3 + 0.5}" x2="${line}" y2="${lq * 3 +
-  0.5}" stroke="lightblue" stroke-width="1"/>
-</svg>`;
-let buff = new Buffer(svg);
-let svg_encoded = buff.toString('base64');
+})
 
 let hcounter = `
 h1, h2, h3, h4, h5, h6, button { font-size: inherit; line-height: inherit; font-style: inherit; font-weight: inherit; margin: 0; font-feature-settings: "tnum"; border: none; background: transparent; padding: 0;  }
@@ -77,7 +47,7 @@ h2 {
   font-size: ${line * 1.5 * hf}px;
   line-height: ${line * 1.5}px;
   font-weight: bold;
-  margin-top: ${lq * 2}px;
+  margin-top: ${rlh * 1}px;
   margin-bottom: ${lq * 2}px;
 }
 h3 {
@@ -111,10 +81,16 @@ h6 {
 p {
   margin-bottom: ${lq * 2}px;
 }
+.content {
+  position: relative;
+  }
 figure {
   margin: 0;
   margin-top: ${lq * 2}px;
   margin-bottom: ${lq * 4}px;
+  display: block;
+  position: relative;
+  page-break-inside: avoid;
 }
 blockquote {
   margin: 0;
@@ -144,19 +120,43 @@ figcaption {
 }
 img {
   display: block;
+  position: relative;
   max-width: 100%;
   margin: 0 auto;
+  page-break-inside: avoid;
 }
-.debug > * {
-  outline: solid 1px green;
-}
-.debug {
-  background-position: 0 -0.5; position: absolute; top: 0; left: 0; width: 100%; height: 100000px; background: url('data:image/svg+xml;base64,${svg_encoded}');
-}
-`;
 
-let sidebar_width = 32;
-let content_width = 64;
+table {
+  min-width: 100%;
+  text-align: left;
+  margin-top: ${lq * 2}px;
+  font-size: ${line * 0.75 * bf}px;
+  line-height: ${line * 0.675}px;
+  border-collapse: collapse;
+}
+table, th, td {
+  border: solid 1px black;
+}
+td {
+  padding-left: 0.5ch;
+  padding-right: 0.5ch;
+  valign: top;
+  vertical-align: top;
+}
+th {
+  padding-left: 0.5ch;
+  padding-right: 0.5ch;
+  vertical-align: top;
+  background: #efefef;
+}
+table ul, table ol {
+  list-style-position: inside;
+  padding-left: 0;
+}
+`
+
+let sidebar_width = 32
+let content_width = 64
 
 function makeFonts() {
   return `
@@ -202,7 +202,7 @@ function makeFonts() {
     font-weight: bold;
     font-style: italic;
   }
-  `;
+  `
 }
 
 function makeStyle() {
@@ -225,8 +225,7 @@ function makeStyle() {
       padding-left: 2ch;
       padding-right: 2ch;
       margin: 0 auto;
-      display: flex;
-      flex-direction: column;
+      display: block;
       padding-bottom: ${line * 0}px;
     }
    p, ul, ol {
@@ -271,12 +270,19 @@ function makeStyle() {
     display: none;
   }
 
+  #report-iso {
+    display: none;
+  }
+
 .table-of-contents {
     counter-reset: chapters;
 }
  .table-of-contents ul {
     list-style: none;
-    padding-left: 0
+    padding-left: 0;
+  }
+ .table-of-contents > ul {
+    padding-bottom: ${rlh}px;
   }
   .table-of-contents > ul > li > a:before {
           counter-increment: chapters;
@@ -285,11 +291,16 @@ function makeStyle() {
  .table-of-contents > ul > li {
     font-weight: bold;
   }
+ .table-of-contents > ul > li {
+    font-weight: bold;
+  }
+ 
  .table-of-contents > ul > li > ul > li {
     font-weight: normal;
     font-style: normal;
     text-transform: none;
     letter-spacing: 0;
+    margin-left: 0;
   }
  .table-of-contents > ul > li > ul > li > ul > li {
     font-weight: normal;
@@ -316,14 +327,34 @@ function makeStyle() {
   }
 
  .table-of-contents > ul > li > ul > li > a {
-    padding-left: 4ch;
+    font-size: ${line * 0.9 * bf}px;
+      line-height: ${line * 0.9}px;
+    // padding-left: 4ch;
   }
   .table-of-contents > ul > li > ul > li > ul > li > a {
     padding-left: 5ch;
   }
 
-
-
+h1 {
+    counter-reset: chp;
+}
+h2 {
+  position: relative;
+  display: block;
+  page-break-before: always;
+  padding-top: ${rlh + rlh / 2}px;
+}
+  h2:before {
+    position: absolute;
+    left: 0;
+    top: 0;
+      font-size: ${line * bf}px;
+    color: black;
+    counter-increment: chp;
+    content: "chapter " counter(chp);
+    text-transform: uppercase;
+  }
+ 
   .toc-desktop-hidden .table-of-contents {
     width: auto;
   }
@@ -424,7 +455,7 @@ function makeStyle() {
     }
   }
 }
-</style>`;
+</style>`
 }
 
 function makeJS() {
@@ -448,7 +479,7 @@ function makeJS() {
     }
 
     window.addEventListener("load", (event) => {
-      let headings = document.querySelectorAll('h1, h2, h3, h4');
+      let headings = document.querySelectorAll('h2, h3');
       let links = document.querySelectorAll('.table-of-contents ul li a')
 
       observer = new IntersectionObserver((entry, observer) => {
@@ -521,12 +552,12 @@ function makeJS() {
       }
       mediaQueryList.addListener(handleBreakpoint);
     }, false);
-  </script>`;
+  </script>`
 }
 
 function makeHead() {
-  let title = 'Causality for Machine Learning';
-  let description = 'TK';
+  let title = 'Causality for Machine Learning'
+  let description = 'TODO'
   return `<head>
     <meta charset="utf-8" />
 
@@ -535,27 +566,17 @@ function makeHead() {
 
     <meta property="og:title" content="${title}" /> 
     <meta property="og:description" content="${description}" />
-    <meta property="og:image" content="https://experiments.fastforwardlabs.com/log/textflix-report/textflix-report-share.png" />
-    <meta property="og:url" content="https://experiments.fastforwardlabs.com/log/textflix-report" />
+    <meta property="og:image" content="https://ff13.fastforwardlabs.com/ff13-share.jpg" />
+    <meta property="og:url" content="https://ff12.fastforwardlabs.com" />
     <meta name="twitter:card" content="summary_large_image" />
     
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/x-icon" href="/static/images/favicon.png" />
+    <link rel="icon" type="image/x-icon" href="https://ff13.fastforwardlabs.com/favicon.ico" />
     
     ${makeStyle()}
     ${makeJS()}
 
-
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-140718127-1"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'UA-140718127-1');
-    </script>
-  </head>`;
+ </head>`
 }
 
 function wrap(content) {
@@ -563,59 +584,50 @@ function wrap(content) {
     <html lang="en">
       ${makeHead()}
       <body>
-        <div class="content nodebug" style="position: relative;">
-          <div style="margin-top: ${line}px;"><a href="https://experiments.fastforwardlabs.com" >Cloudera Fast Forward</a></div>
+        <div class="content" style="position: relative;">
+          <div style="margin-top: ${line}px; line-height: 0; display: flex;">
+            <a href="https://www.cloudera.com/products/fast-forward-labs-research.html"><img alt="Cloudera Fast Forward" style="display: block; height: 14px; margin-bottom: 7px;" src='/figures/cloudera-fast-forward-logo.png' /></a>
+          </div>
           ${content}
         </div>
       </body>
+      <!-- TODO: Google Analytics -->
+      <script>
+     </script>
+      <!-- End Google Analytics -->
     </html>
-  `;
+  `
 }
 
-let filenames = fs.readdirSync(path.join(__dirname, 'src'));
+let filenames = fs.readdirSync(path.join(__dirname, 'src'))
 // let filenames = ['00-frontmatter.md', '03-prototype.md'];
-console.log(filenames);
+//
+filenames = filenames.filter(function(file) {
+  return path.extname(file).toLowerCase() === '.md'
+})
+console.log(filenames)
 
-let report = '';
+let report = ''
 for (let f = 0; f < filenames.length; f++) {
-  console.log(filenames[f]);
   let content = fs.readFileSync(
     path.join(__dirname, 'src/') + filenames[f],
     'utf-8'
-  );
-  report += content + `\n`;
+  )
+  report += content + `\n`
 }
-let html = wrap(md.render(report));
+let prehtml = wrap(md.render(report))
 
-let write_index_to = path.join(__dirname, 'out/');
+// wrap tables for mobile, not supposed to do this
+html = prehtml.replace(
+  /(<table[^>]*>(?:.|\n)*?<\/table>)/g,
+  '<div style="width: 100%; overflow-x: auto;">$1</div>'
+)
+
+let write_index_to = path.join(__dirname, 'out/')
 if (deploy_location === 'exp') {
-  fs.mkdir(path.join(__dirname, 'exp'));
-  fs.copySync(path.join(__dirname, 'out'), path.join(__dirname, 'exp'));
-  write_index_to = path.join(__dirname, 'exp/');
+  fs.mkdir(path.join(__dirname, 'exp'))
+  fs.copySync(path.join(__dirname, 'out'), path.join(__dirname, 'exp'))
+  write_index_to = path.join(__dirname, 'exp/')
 }
 
-fs.writeFileSync(write_index_to + 'index.html', html);
-
-let margin = '0.5in';
-
-// turned off for now (function not called)
-// async () => {
-//   let browser = await puppeteer.launch();
-//   let page = await browser.newPage();
-//   await page.goto(`file:${path.join(__dirname, 'out/index.html')}`, {
-//     waitUntil: 'networkidle2',
-//   });
-//   await page.pdf({
-//     path: 'out/book.pdf',
-//     height: '8.5in',
-//     width: '5.5in',
-//     displayHeaderFooter: true,
-//     margin: {
-//       top: margin,
-//       left: margin,
-//       right: margin,
-//       bottom: margin,
-//     },
-//   });
-//   await browser.close();
-// }();
+fs.writeFileSync(write_index_to + 'index.html', html)
