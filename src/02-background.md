@@ -147,8 +147,6 @@ Of course, there are other ways to encode the information. Given the graph, we c
 
 If we know more about the system, we can move from this causal graph to a full structural causal model. An example SCM compatible with this graph would be:
 
----
-
 ```python
 from numpy.random import randn
 
@@ -167,8 +165,6 @@ def sample():
   z_ = z(x_, y_)
   return x_, y_, z_
 ```
-
----
 
 Each of the variables has an independent random noise associated with it, arising from factors not modeled by the graph. These distributions need not be identical, but must be independent. Notice that the structure of the graph encodes the dependencies between variables, which we see as the function signatures. The values of `x` and `y` are independent, but `z` depends on both. We can also see clearly that the model defines a generative process for the data, since we can easily sample from the joint distribution by calling the `sample` function. Doing so repeatedly allows us to chart the joint distribution, and see that `x` and `y` are indeed independent; there’s no apparent correlation in the scatter chart.
 
