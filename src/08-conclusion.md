@@ -1,0 +1,9 @@
+## Conclusion
+
+Structural causal models give us a framework for thinking precisely about cause and effect, and encoding our assumptions about data generating processes. Knowing the complete model for a system is immensely powerful, allowing us to reason about how the system will behave when we intervene in the data generating process, and correct for selection biases.
+
+In machine learning, we’re often concerned only with prediction, for which we do not need causal inference. However, even in this scenario, taking a causal approach brings some benefits. Notably, causal relationships are invariant - they do not change between environments - and when we learn predictors based on them, we get greatly improved out-of-distribution generalization.
+
+For many problems, constructing a causal graph is prohibitively hard. Fortunately, by relying on the correspondence between causal relationships and invariance, we can still construct the relevant part of the causal graph for some problems using [Invariant Causal Prediction](#invariant-causal-prediction). For high dimensional inputs like image and text, we can use [Invariant Risk Minimization](#invariant-risk-minimization) to learn a predictor that greatly enhances our out-of-distribution performance by learning not to rely on dataset-specifc spurious correlations.
+
+Research at the intersection of causality and machine learning is blooming, with many major ML conferences hosting dedicated workshops. Invariance-based approaches are an especially promising development and are ripe for industrial application. As algorithmic systems become increasingly prevalent and their influence grows, the need for causal reasoning becomes all the more acute. We hope this report has sparked some causal curiosity in you!
