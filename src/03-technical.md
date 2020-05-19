@@ -72,8 +72,7 @@ The mathematics of causality make the notion of invariance and environments prec
 
 In the machine learning setting, we are mostly concerned with using features to predict a target. As such, we tend to select features for their predictive performance. In contrast, causal graphs are constructed based on domain knowledge and statistical independence relations, and thus encode a much richer dependency structure. However, we are not always interested in the entire causal graph. We may be interested only in the causes of a particular target variable. This puts us closer to familiar machine learning territory.
 
-[figure: machine learning "graph" vs causal graph]
-Fig. In supervised learning, we often use all available variables (or a subset selected for predictive performance) to predict an outcome. With structural causal models, we encode a much richer dependency structure between variables.
+![In supervised learning, we often use all available variables (or a subset selected for predictive performance) to predict an outcome. With structural causal models, we encode a much richer dependency structure between variables.](figures/ff13-14.png)
 
 We will now examine two approaches to combining causal invariance and machine learning. The first, invariant causal prediction, uses the notion of invariance to infer the direct causes of a variable of interest. This restricted form of causal discovery - working out the structure of a small part of the graph we are interested in - is appropriate for problems with well defined variables where a structural causal model (or at least causal graph) could be created, in principle if not in practice.
 
