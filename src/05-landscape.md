@@ -14,7 +14,7 @@ A diagnostic model based on invariant prediction that treats scanners as environ
 
 #### Robotics
 
-[figure: robot]
+![figure: robot](figures/ff13-26.png)
 
 Autonomous systems need to detect and adapt to different environments. These systems rely on sophisticated sensors, cameras and large amounts of labeled and diverse real-world datasets which are difficult to acquire. Take for example, the task of autonomously following a man-made trail that is traversed by hikers or mountain bikers. This is a mostly unsolved task for robotics but yet an important one for applications like search and rescue.^[[A Machine Learning Approach to Visual Perception of Forest Trails for Mobile Robots](http://rpg.ifi.uzh.ch/docs/RAL16_Giusti.pdf)]
 
@@ -30,7 +30,7 @@ Unfortunately, it is hard to satisfactorily model this data due to the diversity
 
 #### Natural language processing
 
-[figure: different types of text]
+![figure: different types of text](figures/ff13-25.png)
 
 Invariant prediction approaches are of course not restricted exclusively to image problems. In natural language processing, texts from different publication platforms are tricky to analyze due to different contexts, vocabularies and differences between how authors express themselves. For instance, financial news articles use a vocabulary and tone that differs from culture or society articles. The former is likely terse, whereas the latter may have an entertaining or personal tone. Similarly, online product reviews are linguistically different from tweets. Sentiment classification also relies heavily on context; different words are used to express whether someone likes a book versus an electronic gadget.
 
@@ -38,7 +38,7 @@ Two recent papers, [An Empirical Study of Invariant Risk Minimization](https://a
 
 #### Recommender systems
 
-[figure: recommender system]
+![figure: recommender system](figures/ff13-24.png)
 
 Recommendation systems are algorithms designed to present relevant items to the users on the web, for example, suggesting which movie to watch, a book to read or a product to buy. As such, making good recommendations is an important problem. The problem is one of making a relevant recommendation for a user based on a record of their historical activities, from which we must infer their preferences.
 

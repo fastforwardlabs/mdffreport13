@@ -6,7 +6,7 @@ Machine learning is playing an increasingly critical role in our society. Decisi
 
 Even without employing the full machinery of causal inference, when one approaches a new problem, it can be informative to try to write down the causal graph. This forces us to confront our assumptions about a system. It also allows someone else to understand our assumptions, and gives a precise framework to debate.
 
-[figure: people arguing over which direction an arrow goes]
+![figure: people arguing over which direction an arrow goes](figures/ff13-22.png)
 
 Making our assumptions explicit aids transparency, which is a win. However, it doesn’t protect against bad assumptions. Establishing causal relationships is hard. Unless we are able to perform sufficient experiments to validate our hypotheses, causal reasoning from observational data is subject to untested (sometimes untestable) assumptions.
 
