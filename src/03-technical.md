@@ -60,7 +60,7 @@ How can we go about creating such a model? We could simply train our model with 
 
 The connection between causality and invariance is well established. In fact, causal relationships are by their nature invariant. The way many intuitive causal relationships are established is by observing that the relationship holds all the time, in all circumstances. Consider how physical laws are discovered. They are found by performing a series of experiments in different conditions, and monitoring which relationships hold, and what their functional form is. In the process of discovering nature’s laws, we will perform some tests that do not show the expected result. In cases where a law does not hold, this gives us information to refine the law to something that is invariant across environments.^[The scientific process of iterated hypothesis and experimentation can also be applied to constructing a causal model for business purposes. The popular George Edward Box quote is pertinent here: “all models are wrong, but some are useful”.]
 
-[figure: boiling water]
+![figure: boiling water](figures/ff13-12.png)
 
 For example, water boils at 100 degrees Celsius. We could observe that everywhere, and write a simple causal graph: temperature &rarr; water boiling. We have learned a relationship that is invariant across all the environments we have observed.
 
@@ -87,8 +87,7 @@ Often, the quantity we are ultimately concerned with in a causal analysis is the
 
 The key insight offered by ICP is that because direct causal relationships are invariant, we can use that to determine the causal parents (the direct causes). The set up is similar to machine learning; we have some input features, and we’d like a model of an output target. The difference from supervised learning is that the goal is not performance at predicting the target variable. In ICP, we aim to discover the direct causes of a given variable - the variables that point directly into the target in the causal graph.
 
-[figure: full causal graph to fewer assumption version]
-Fig. We are not always interested in the full causal graph, and instead only seek to find the direct causes of a given target variable. This brings some of the advantages of a causal model into the supervised learning paradigm.
+![We are not always interested in the full causal graph, and instead only seek to find the direct causes of a given target variable. This brings some of the advantages of a causal model into the supervised learning paradigm.](figures/ff13-15.png)
 
 To use ICP, we take a target variable of interest, and construct a plausible list of the potential direct causes of that variable. Then we must define environments for the problem: each environment is a dataset. In the language of SCMs, each environment corresponds to data observed when a particular intervention somewhere in the graph was active. We can reason about this even without specifying the whole graph, or even which particular intervention was active, so long as we can separate the data into environments. In practice, we often take an observed variable to be the environment variable, when it could plausibly be so.
 
@@ -96,13 +95,11 @@ For instance, perhaps we are predicting sales volume in retail, and want to disc
 
 Environments might be different counties (or even countries) - something that is unlikely to impact the sales directly, but which may impact the features that themselves impact the sales. For instance, different places will have different populations, and population density is a possible cause of sales volume. Importantly, the environment cannot be a descendent of the target variable.^[There is a subtlety here. We said environments were defined by interventions. Naturally, it is impossible to intervene on the country a store is built in once the store is built. This turns out not to matter for the purposes of inferring the direct causal parents of the sales volume, so long as the country is further up the graph, and changing country alters the data generating process.]
 
-[figure: two environments with same important features]
-Fig. We fit a model in multiple environments, and monitor which features are consistently predictive.
+![We fit a model in multiple environments, and monitor which features are consistently predictive.](figures/ff13-16.png)
 
 To apply ICP, we first consider a subset of features. We then fit a linear (Gaussian) regression from this subset to the target in each environment we have defined. If the model does not change between environments (which can be assessed either via the coefficients or a check on residuals), we have found a set of features that appear to result in an invariant predictor. We iterate over subsets of features combinatorially. Features that appear in a model that is invariant are plausible causes of the target variable. The intersection of these sets of plausible causes (i.e. the features which are predictive in all environments) is then a subset of the true direct causes.
 
-[figure: causal graph and ml with important features/causal parents highlighted]
-Fig. The features that are consistently predictive of a target are likely the causal parents in the (unknown!) causal graph.
+![The features that are consistently predictive of a target are likely the causal parents in the (unknown!) causal graph.](figures/ff13-17.png)
 
 In machine learning terms, ICP is essentially a feature selection method, where the features selected are very likely to be the direct causes of the target. The model built atop those features can be interpreted causally: a high coefficient for a feature means that feature has a high causal effect on the target, and changes in those features should result in the predicted change in the target.
 
@@ -132,7 +129,7 @@ Said differently, the idea is that there is a latent causal structure behind the
 
 The idea of a latent causal system generating observed features is particularly useful as a view of computer vision problems. Computer vision researchers have long studied the generative processes involved in moving from real world objects to pixel representations.^[Longer than you may think! See, for instance, [Machine perception of three-dimensional solids](https://dspace.mit.edu/handle/1721.1/11589), published in 1963.] It’s instructive to inspect the causal structure of a dataset of cow pictures.
 
-[figure: causal direction with cows]
+![figure: causal direction with cows](figures/ff13-13.png)
 
 In nature, cows exist in fields and on beaches, and we have an intuitive understanding that the cow itself and the ground are different things. A neural network trying to predict the presence of a cow in an image could be called an “anti-causal” learning problem, because the direction of causation is the opposite of the direction of prediction. The presence of a cow causes certain pixel patterns, but pixels are the input to the network, and the presence of a cow is the output.
 
@@ -146,7 +143,7 @@ Learning in the causal direction explains some of the success of supervised lear
 
 To learn an invariant predictor, we must provide the IRM algorithm with data from multiple environments. As in ICP, these environments take the form of datasets, and as such the environments must be discrete. We need not specify the graphical or interventional structure associated with the environments. The motivating example of the IRM paper asks us to consider a machine learning system to distinguish cows from camels, highlighting a similar problem to that which [Recognition in Terra Incognita](https://arxiv.org/abs/1807.04975) does - animals being classified based on their environment, rather than the animal. In this case, cows on sand may be misclassified as camels, due to the spurious correlations absorbed by computer vision systems.
 
-[figure: two environments into one target]
+![figure: two environments into one target](figures/ff13-18.png)
 
 Simply providing data from multiple environments is not enough. The problem of learning the optimal classifier in multiple environments is a bi-level constrained optimization problem, in which we must simultaneously find the optimal data representation and optimal classifier across multiple separate datasets. IRM reduces the problem to a single optimization loop, using a trick of introducing a constant classifier and introducing a new penalty term to the loss function.
 
@@ -164,7 +161,7 @@ As a baseline, we perform regular supervised learning to learn a binary classifi
 
 The trouble arises when we want to identify a cow on snow, and find that our classifier did not really learn to identify a cow. It learned to identify grass. The holdout performance of our model in any new environment we haven’t trained on will be poor.
 
-[figure: three cows as input to model, predicting cow, polar bear and camel]
+![figure: three cows as input to model, predicting cow, polar bear and camel](figures/ff13-19.png)
 
 With IRM, we perform the training across (at least) two environments, and include the penalty term for each in the loss. We’ll almost certainly find that our performance in the training environments is reduced. However, because we have encouraged the learning of invariant features that transfer across environments, we’re more likely to be able to identify cows on snow. In fact, the very reason our performance in training is reduced is that we’ve not absorbed so many spurious correlations that would hurt prediction in new environments.
 
@@ -180,10 +177,8 @@ However, there is no panacea, and IRM comes with some challenges.
 
 Often, the dataset that we use in a machine learning project is collected well ahead of time, and may have been collected for an entirely different purpose. Even when a well-labeled dataset that is amenable to the problem exists, it is seldom accompanied by detailed metadata (by which we mean information about the information). As such, we often do not have information about the environment in which the data was collected.
 
-[figure: varied dataset with no metadata on environment]
+![figure: varied dataset with no metadata on environment](figures/ff13-20.png)
 
 Another challenge is finding data from sufficiently diverse environments. If the environments are similar, IRM will be unlikely to learn features that generalize to environments that are different. This is both a blessing and a curse - on the one hand, we do not need to have perfectly separated environments to benefit from IRM, but on the other, we are limited by the diversity of environments. If a feature appears to be a good predictor in all the environments we have, IRM will not be able to distinguish that from a true causal feature. In general, the more environments we have, and the more diverse they are, the better IRM will do at learning an invariant predictor, and the closer we get to a causal representation.
-
-[figure: similar environments]
 
 No model is perfect, and whether or not one is appropriate to use depends on the objective. IRM is more likely to produce an invariant predictor, with good out-of-distribution performance, than empirical risk minimization (regular supervised learning), but doing so will come at the expense of predictive performance in the training environment. It’s entirely possible that for a given application, we are very sure that the data in the eventual test distribution (“in the wild”) will be distributed in the same way as our training data. Further, we may know that all we want to do with the resulting model is predict, not intervene. If both these things are true, we should  stick to supervised learning with empirical risk minimization and exploit all the spurious correlations we can.
