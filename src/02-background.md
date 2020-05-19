@@ -6,7 +6,7 @@ In this chapter, we aim to familiarize the reader with the essentials of causal 
 
 Imagine a bank that would like to reduce the number of business loans which default. Historical data and sophisticated supervised learning techniques may be able to accurately identify which loans are likely to default, and interpretability techniques may tell us some features that are correlated with (or predictive of) defaulting. However, to reduce the default rate, we must understand what changes to make, which requires understanding not only _which_ loans default, but _why_ the loans default.
 
-[figure: bank]
+![A bank would like to decide which business loans to grant based on true, causal relationships.](figures/ff13-01.png)
 
 It may be that we find small loans are more likely to default than larger loans. One might naively assume that the bank ought to stop making small loans. However, perhaps it is really the case that smaller businesses are more likely to fail than large businesses, and _also_ more likely to apply for small loans. In this case, the true causal relationship is between the size of the _business_ and defaulting, not between the size of the _loan_ and defaulting. If so, we could have made a poor policy decision about loan size, rather than business size.
 
@@ -23,15 +23,15 @@ With success have come inflated expectations of autonomous systems capable of in
 
 One such limitation is **generalizability** (also called _robustness_ or _adaptability_), that is, the ability to apply a model learned in one context in a new environment. Many current state-of-the-art machine learning approaches assume that the trained model will be applied to data that looks the same as the training data. These models are trained on highly specific tasks, like recognizing dogs in images or identifying fraud in banking transactions. In real life, though, the data on which we predict is often different from the data on which we train, even when the task is the same. For example, training data is often subject to some form of selection bias, and simply collecting more of it does not mitigate that.
 
-[figure: generalizability]
+![The real world is often distributed differently than our training data.](figures/ff13-02.png)
 
 Another limitation is **explainability**, that is, machine learning models remain mostly “black boxes” unable to explain the reasons behind their predictions or recommendations, thus eroding users' trust and impeding diagnosis and repair. For example, a deep learning system can be trained to recognize cancer in medical images with high accuracy, provided it is given plenty of images and compute power, but - unlike a real doctor - it cannot explain why or how a particular image suggests disease. Several methods for understanding model predictions have been developed, and while these are necessary and welcome, understanding the interpretation and limitations of their outputs is a science in itself. While model interpretation methods like [LIME](https://arxiv.org/abs/1602.04938) and [SHAP](https://arxiv.org/abs/1705.07874) are useful, they provide insight only into how the model works, not how the world works.
 
-[figure: explainability]
+![figure: explainability](figures/ff13-03.png)
 
 And finally, the understanding of **cause-and-effect** connections - a key element of human intelligence - is absent from pattern recognition systems. Humans have the ability to answer “what if” kinds of questions. What if I change something? What if I had acted differently? Such interventional, counterfactual or retrospective questions are the forté of human intelligence. While imbuing machines with this kind of intelligence is still far-fetched, researchers in deep learning are increasingly recognizing the importance of these questions, and using them to inform their research.^[See for instance, recent works by Yoshua Bengio, like [A Meta-Transfer Objective for Learning to Disentangle Causal Mechanisms](https://arxiv.org/abs/1901.10912).]
 
-[figure: cause and effect]
+![figure: cause and effect](figures/ff13-04.png)
 
 All of this means that supervised machine learning systems must be used cautiously in certain situations. And if we want to mitigate these restrictions effectively, causation is key.
 
@@ -56,7 +56,7 @@ In general, this is not possible, and we must at least impose some modeling assu
 
 In [The Book of Why](http://bayes.cs.ucla.edu/WHY/), Judea Pearl, author of much foundational work in causality, describes three kinds of reasoning we can perform as the rungs on a ladder. These rungs describe when we need causality, and what it buys us.^[See also Pearl’s article: [The Seven Tools of Causal Inference, with Reflections on Machine Learning](https://cacm.acm.org/magazines/2019/3/234929-the-seven-tools-of-causal-inference-with-reflections-on-machine-learning/fulltext).]
 
-[figure: ladder]
+![The ladder of causation, as described in [The Book of Why](http://bayes.cs.ucla.edu/WHY/).](figures/ff13-06.png)
 
 On the **first rung**, we can do **statistical and predictive reasoning**. This covers most (but not all) of what we do in machine learning. We may make very sophisticated forecasts, infer latent variables in complex deep generative models, or cluster data according to subtle relations - all of these things sit on rung one.
 
@@ -69,6 +69,8 @@ _Example: a bank would like to reduce the number of loans which default, and con
 The **third rung** is **counterfactual reasoning**. On this rung, we can talk not only about what has happened, but also what would have happened if circumstances were different. Counterfactual reasoning requires a more precisely specified causal model than intervention. This form of reasoning is very powerful, providing a mathematical formulation of computing in alternate worlds where events were different.
 
 _Example: a bank would like to know what the likely return on a loan would have been, had they offered different terms to what they did._
+
+![figure: ladder with bank](figures/ff13-07.png)
 
 By now, we hopefully agree that there is something to causality, and it has much to offer. We have yet to really define causality. We must begin with that most familiar refrain: correlation is not causation.
 
@@ -109,7 +111,7 @@ Remarkably, it’s possible to do much causal reasoning, including calculating t
 
 The simplest way in which correlation between two variables arises is when one variable is a direct cause of the other. We say that one thing causes another when a change in the first thing, while holding everything else constant, results in a change in the second. In the business loan defaulting example discussed earlier, this could mean we could create a two node graph with one of the nodes being whether or not a business is small (say “small business” with values 0 or 1) and the other node being “default” indicating whether or not the business defaulted on the loan. In this case, we would expect that a small business increases the chances of it defaulting.
 
-[figure: direct causation]
+![figure: direct causation](figures/ff13-08.png)
 
 This setup is immediately reminiscent of supervised learning, where we have a dataset of features, X, and targets, Y, and want to learn a mapping between them. However, in machine learning, we typically start with all available features and select those that are most informative about the target. When drawing a causal relationship, only those features we believe have an actual causal effect on the target should be included as direct causes. As we will see below, there are other diagrams that can lead to a predictive statistical relationship between X and Y in which neither directly causes the other.
 
@@ -117,7 +119,7 @@ This setup is immediately reminiscent of supervised learning, where we have a da
 
 A common pattern is for a single variable to be the cause of multiple other variables. If a variable Z is a direct cause of both X and Y, we say that Z is a common cause and call the structure a “fork.” For example, unemployment could potentially cause both loan default and reduced consumer spend.
 
-[figure: fork]
+![figure: fork](figures/ff13-09.png)
 
 Because both consumer spend and loan default depend on unemployment , they will appear correlated. A given value of unemployment will generate some values of consumer spend and loan default, and when unemployment changes, both consumer spend and loan default will change. As such, in the joint distribution of the SCM, the two dependent variables, consumer spend and loan default, will appear statistically related to one another.
 
@@ -125,10 +127,13 @@ However, if we were to _condition_ on unemployment (for instance, by selecting d
 
 The common cause unemployment _confounds_ the relationship between consumer spend and loan default. We are unable to correctly calculate the relationship between consumer spend and loan default without accounting for unemployment (by conditioning). This is especially dangerous if unnoticed.
 
-Unfortunately, confounders can be tricky or impossible to detect from observational data alone. In fact, if we look only at consumer spend and loan default, we could see the same joint distribution as in the case where consumer spend and loan default are directly causally related. As such, we should think of causal graphs as encoding our _assumptions_ about the system we are studying. We return to this point in [TODO: link] How do we know which graph to use?
+Unfortunately, confounders can be tricky or impossible to detect from observational data alone. In fact, if we look only at consumer spend and loan default, we could see the same joint distribution as in the case where consumer spend and loan default are directly causally related. As such, we should think of causal graphs as encoding our _assumptions_ about the system we are studying. We return to this point in [How do we know which graph to use?](#how-do-we-know-which-graph-to-use%3F)
 
 ##### 3. Common effect
+
 The opposite common pattern is for one effect to have multiple direct causes. A node that has multiple causal parents is called a “collider” with respect to those nodes.
+
+![figure: collider](figures/ff13-10.png)
 
 A collider is a node that depends on more than one cause. In this example, loan defaulting depends on both commercial credit score and number of liens (a “lien” refers to the right to keep possession of property belonging to another entity until a debt owed by that entity is discharged), so we call loan default a _collider_.
 
@@ -240,6 +245,8 @@ To know what would happen when we intervene to change a feature, we must compute
 Interpretability techniques such as LIME provide important insights into models, but they are not causal insights. To make good decisions using the output of any interpretability method, we need to combine it with causal knowledge.
 
 Often, this causal knowledge is not formally specified in a graph, and we simply call it “domain knowledge,” or expertise. We have emphasized what the _model_ cannot do, in order to make the technical point clear, but in reality, anyone working with the model would naturally apply their own expertise. The move from that to a causal model requires formally encoding the assumptions we make all the time and verifying that the expected statistical relationships hold in our observed data (and if possible, experimenting). Doing so would give us an understanding of the cause-effect relationships in our system, and the ability to reason quantitatively about the effect of interventions.
+
+![figure: people making assumptions](figures/ff13-11.png)
 
 Constructing a useful causal model of churn is a complex undertaking, requiring both deep domain knowledge and a detailed technical understanding of causal inference.^[ Alas, it requires a far more detailed technical knowledge than we can provide in this report. We recommend the textbook [Causal Inference in Statistics: A Primer](http://bayes.cs.ucla.edu/PRIMER/) for a succinct introduction to Structural Causal Models. An abbreviated overview ([Causal Inference in Statistics: An Overview](https://ftp.cs.ucla.edu/pub/stat_ser/r350.pdf)) is freely available as a PDF. The textbook [Elements of Causal Inference](https://mitpress.mit.edu/books/elements-causal-inference) (available through Open Access) also covers structural causal models, with additional links to machine learning.] In Chapter 3, we will discuss some techniques that are bridging the gap between a full causal model, and the supervised learning setup we use in problems like churn prediction.
 
