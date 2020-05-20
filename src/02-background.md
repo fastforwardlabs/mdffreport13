@@ -111,7 +111,7 @@ Remarkably, it’s possible to do much causal reasoning, including calculating t
 
 ##### 1. Direct causation
 
-The simplest way in which correlation between two variables arises is when one variable is a direct cause of the other. We say that one thing causes another when a change in the first thing, while holding everything else constant, results in a change in the second. In the business loan defaulting example discussed earlier, this could mean we could create a two node graph with one of the nodes being whether or not a business is small (say “small business” with values 0 or 1) and the other node being “default” indicating whether or not the business defaulted on the loan. In this case, we would expect that a small business increases the chances of it defaulting.
+The simplest way in which correlation between two variables arises is when one variable is a direct cause of the other. We say that one thing causes another when a change in the first thing, while holding everything else constant, results in a change in the second. In the business loan defaulting example discussed earlier, we could create a two node graph with one of the nodes being whether or not a business is small (say “small business” with values 0 or 1) and the other node being “default” indicating whether or not the business defaulted on the loan. In this case, we would expect that a small business increases the chances of it defaulting.
 
 ![figure: direct causation](figures/ff13-08.png)
 
