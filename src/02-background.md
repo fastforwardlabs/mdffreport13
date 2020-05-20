@@ -225,7 +225,7 @@ The model used to calculate the churn score is an ensemble of a linear model, a 
 
 To understand the predictions made, we apply [LIME](https://arxiv.org/abs/1602.04938). This returns a feature importance at the local level: which features contributed to each individual prediction. To accompany the analysis, we built Refractor, an interface for exploring the feature importances. Examining these is interesting, and highlights the factors that are _correlated_ with a customer being likely to churn. [Refractor](https://refractor.fastforwardlabs.com/) suggests which features most affect the churn prediction, and allows an analyst to change customer features and see the resulting churn prediction.
 
-[figure: refractor]
+![The [Refractor](https://refractor.fastforwardlabs.com/) prototype](figures/refractor.gif)
 
 Because we have a model that provides new predictions when we change the features, it is tempting to believe we can infer from this alone how to reduce churn probability. Aside from the fact that often the most important features cannot be changed by intervention (tenure, for instance), this is an incorrect interpretation of what LIME and our model provide. The correct interpretation of the prediction is the probability of churn for someone who _naturally_ occurred in our dataset with those features, or, for instance, what this same customer's churn probability will look like next year (when tenure will have naturally increased by one year), assuming none of their other features change.
 
