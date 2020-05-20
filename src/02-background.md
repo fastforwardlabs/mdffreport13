@@ -27,11 +27,11 @@ One such limitation is **generalizability** (also called _robustness_ or _adapta
 
 Another limitation is **explainability**, that is, machine learning models remain mostly “black boxes” unable to explain the reasons behind their predictions or recommendations, thus eroding users' trust and impeding diagnosis and repair. For example, a deep learning system can be trained to recognize cancer in medical images with high accuracy, provided it is given plenty of images and compute power, but - unlike a real doctor - it cannot explain why or how a particular image suggests disease. Several methods for understanding model predictions have been developed, and while these are necessary and welcome, understanding the interpretation and limitations of their outputs is a science in itself. While model interpretation methods like [LIME](https://arxiv.org/abs/1602.04938) and [SHAP](https://arxiv.org/abs/1705.07874) are useful, they provide insight only into how the model works, not how the world works.
 
-![figure: explainability](figures/ff13-03.png)
+![Predictions alone are often not useful unless accompanied by an explanation.](figures/ff13-03.png)
 
 And finally, the understanding of **cause-and-effect** connections - a key element of human intelligence - is absent from pattern recognition systems. Humans have the ability to answer “what if” kinds of questions. What if I change something? What if I had acted differently? Such interventional, counterfactual or retrospective questions are the forté of human intelligence. While imbuing machines with this kind of intelligence is still far-fetched, researchers in deep learning are increasingly recognizing the importance of these questions, and using them to inform their research.^[See for instance, recent works by Yoshua Bengio, like [A Meta-Transfer Objective for Learning to Disentangle Causal Mechanisms](https://arxiv.org/abs/1901.10912).]
 
-![figure: cause and effect](figures/ff13-04.png)
+![Humans use counterfactual reasoning all the time. This is enabled by our unconcious understanding of cause and effect.](figures/ff13-04.png)
 
 All of this means that supervised machine learning systems must be used cautiously in certain situations. And if we want to mitigate these restrictions effectively, causation is key.
 
@@ -41,13 +41,13 @@ Causal inference provides us with tools that allow us to answer the question of 
 
 Causality has long been of interest to humanity on a philosophical level, but it has only been in the latter half of the 20th century (thanks to the work of pioneering methodologists such as Donald Rubin and Judea Pearl), that a mathematical framework for causality has been introduced. In recent years, the boom of machine learning has enhanced the development of causal inference and attracted new researchers to the area.
 
-Identifying causal effects helps us understand a variety of things: for example, user behavior in online systems^[See, for instance [Using Causal Inference to Improve the Uber User Experience](https://eng.uber.com/causal-inference-at-uber/).], effect of social policies, risk factors of diseases. Questions of cause-and-effect are also critical for the design of data-driven applications. For instance, how do algorithmic recommendations affect our purchasing decisions? How do they affect a student’s learning outcome or a doctor’s efficacy? All of these are hard questions and require thinking about the counterfactual: what would have happened in a world with a different system, policy, or intervention?  Without causal reasoning, correlation-based methods can lead us astray.
+Identifying causal effects helps us understand a variety of things: for example, user behavior in online systems,^[See, for instance [Using Causal Inference to Improve the Uber User Experience](https://eng.uber.com/causal-inference-at-uber/).] effect of social policies, risk factors of diseases. Questions of cause-and-effect are also critical for the design of data-driven applications. For instance, how do algorithmic recommendations affect our purchasing decisions? How do they affect a student’s learning outcome or a doctor’s efficacy? All of these are hard questions and require thinking about the counterfactual: what would have happened in a world with a different system, policy, or intervention?  Without causal reasoning, correlation-based methods can lead us astray.
 
 That said, learning causality is a challenging problem. There are broadly two situations in which we could find ourselves: in one case, we are able to actively intervene in the system we are modeling and get experimental data; in the other, we have only observational data.
 
 The gold standard in establishing causal effects is a Randomised Controlled Trial (RCT) and this falls under the experimental data category. In an RCT, we try to engineer similar populations using random assignment (as choosing the populations manually could introduce selection effects that destroy our ability to learn causal relations) and apply an intervention to one population and not the other. From this, we measure the causal effect of changing one variable as a simple difference in the quantity of interest between the two populations.
 
-![figure: rct](figures/ff13-05.png)
+![Randomised controlled trials are the gold standard in establishing causal effects.](figures/ff13-05.png)
 
 We can use RCTs to establish whether a particular causal relation holds. However, trials are not always physically possible, and even when they are, they are not always ethical (for instance, it would not be ethical to deny a patient a treatment that is reasonably believed to work, or trial a news aggregation algorithm designed to influence a person’s mood without informed consent).^[Facebook performed [such an experiment](https://www.pnas.org/content/111/24/8788) in 2012, and received [much criticism](https://www.theatlantic.com/technology/archive/2014/06/everything-we-know-about-facebooks-secret-mood-manipulation-experiment/373648/) as a result. The ethical problem is not so much with the experiment itself, but rather that the subjects had not given informed consent, in violation of basic ethical guidelines for psychological research.] In some cases, we can find naturally occurring experiments. In the worst case, we're left trying to infer causality from observational data alone.
 
@@ -72,9 +72,9 @@ The **third rung** is **counterfactual reasoning**. On this rung, we can talk no
 
 _Example: a bank would like to know what the likely return on a loan would have been, had they offered different terms to what they did._
 
-![figure: ladder with bank](figures/ff13-07.png)
+![The ladder of causation describes the kind of question we can answer depending on the sophistication of our causal model.](figures/ff13-07.png)
 
-By now, we hopefully agree that there is something to causality, and it has much to offer. We have yet to really define causality. We must begin with that most familiar refrain: correlation is not causation.
+By now, we hopefully agree that there is something to causality, and it has much to offer. However, we have yet to really _define_ causality. We must begin with that most familiar refrain: correlation is not causation.
 
 
 ### From correlation to causation
@@ -85,7 +85,7 @@ Very many things display correlation. The rooster crows when the sun rises.^[Som
 
 Correlated things are not always related.^[On a technical note, correlation measures only _linear_ association. For instance, `x` squared is uncorrelated with `x`, despite being completely dependent on it. When we say “correlation is not causation,” we really mean “statistical dependence is not causation”.] It’s possible to find many correlations with no readily imaginable causal interaction. The internet treasure [Spurious Correlations](https://www.tylervigen.com/spurious-correlations) collects many amusing examples of this. These spurious correlations most likely arise as a result of small sample size and coincidences that are bound to happen when making many comparisons. We should not be surprised if we find something that has low probability if we try many combinations.
 
-[figure: spurious correlation]
+![Figure source: [Spurious Correlations](https://www.tylervigen.com/spurious-correlations).](figures/spurious-correlation.png)
 
 In real world systems, spurious correlations can be cause for serious ethical concerns. For instance, certain characteristics may be associated with individuals or minority groups which make superficial features powerful at a learning task. This can easily embed bias and unfairness into an algorithm based on spurious correlations in a given dataset.
 
@@ -113,7 +113,7 @@ Remarkably, it’s possible to do much causal reasoning, including calculating t
 
 The simplest way in which correlation between two variables arises is when one variable is a direct cause of the other. We say that one thing causes another when a change in the first thing, while holding everything else constant, results in a change in the second. In the business loan defaulting example discussed earlier, we could create a two node graph with one of the nodes being whether or not a business is small (say “small business” with values 0 or 1) and the other node being “default” indicating whether or not the business defaulted on the loan. In this case, we would expect that a small business increases the chances of it defaulting.
 
-![figure: direct causation](figures/ff13-08.png)
+![Direct causation gives rise to statistical dependence between two variables. In this fictional example, the indicator variable for Small businesses has a direct causal effect on the Loan Defalt indicator variable.](figures/ff13-08.png)
 
 This setup is immediately reminiscent of supervised learning, where we have a dataset of features, X, and targets, Y, and want to learn a mapping between them. However, in machine learning, we typically start with all available features and select those that are most informative about the target. When drawing a causal relationship, only those features we believe have an actual causal effect on the target should be included as direct causes. As we will see below, there are other diagrams that can lead to a predictive statistical relationship between X and Y in which neither directly causes the other.
 
@@ -121,7 +121,7 @@ This setup is immediately reminiscent of supervised learning, where we have a da
 
 A common pattern is for a single variable to be the cause of multiple other variables. If a variable Z is a direct cause of both X and Y, we say that Z is a common cause and call the structure a “fork.” For example, unemployment could potentially cause both loan default and reduced consumer spend.
 
-![figure: fork](figures/ff13-09.png)
+![Two effects appear statistically dependent, but only because of a common cause. If the common cause, Unemployment, is fixed, then Consumer Spend and Loan Default become statistically independent.](figures/ff13-09.png)
 
 Because both consumer spend and loan default depend on unemployment , they will appear correlated. A given value of unemployment will generate some values of consumer spend and loan default, and when unemployment changes, both consumer spend and loan default will change. As such, in the joint distribution of the SCM, the two dependent variables, consumer spend and loan default, will appear statistically related to one another.
 
@@ -135,7 +135,7 @@ Unfortunately, confounders can be tricky or impossible to detect from observatio
 
 The opposite common pattern is for one effect to have multiple direct causes. A node that has multiple causal parents is called a “collider” with respect to those nodes.
 
-![figure: collider](figures/ff13-10.png)
+![Variables that share a common effect are independent, until we fix the effect. For a given value of Loan Default, there is an induced dependency between the Number of Liens and Credit Score.](figures/ff13-10.png)
 
 A collider is a node that depends on more than one cause. In this example, loan defaulting depends on both commercial credit score and number of liens (a “lien” refers to the right to keep possession of property belonging to another entity until a debt owed by that entity is discharged), so we call loan default a _collider_.
 
@@ -175,10 +175,11 @@ def sample():
 
 Each of the variables has an independent random noise associated with it, arising from factors not modeled by the graph. These distributions need not be identical, but must be independent. Notice that the structure of the graph encodes the dependencies between variables, which we see as the function signatures. The values of `x` and `y` are independent, but `z` depends on both. We can also see clearly that the model defines a generative process for the data, since we can easily sample from the joint distribution by calling the `sample` function. Doing so repeatedly allows us to chart the joint distribution, and see that `x` and `y` are indeed independent; there’s no apparent correlation in the scatter chart.
 
-[figure: histogram and scatter plot]
-Fig. Histogram of the distribution of x, y and z, and scatter plot of the joint distribution of x and y.
+![Left: Histograms of the observational distributions of x, y and z. Right: Scatter plot of the observational joint distribution of x and y. Since x and y are not causally connected except through the collider z, they are completely uncorrelated.](figures/scm-intervened.png)
 
 Now that we have a model in code, we can see a selection bias effect. If we condition the data to only values of `z` (the collider node) greater than a cutoff (which we can do easily, if inefficiently, by filtering the samples to those where `z > 2.5`), the previously independent `x` and `y` become negatively correlated.
+
+![Left: We have conditioned on z > 2.5 by filtering the samples (note the change of scale), which changes the x and y distributions - they're both shifted right. Right: The conditional joint distribution of x and y, with a line showing a linear fit, which illustrates the induced negative correlation.](figures/scm-conditioned.png)
 
 :::
 
@@ -210,13 +211,9 @@ def sample_intervened():
   return x_, y_, z_
 ```
 
-Performing this intervention results in a new distribution for `z`, which is different from the observational distribution that we saw earlier.
+Performing this intervention results in a new distribution for `z`, which is different from the observational distribution that we saw earlier. Further, the relationship between x and y has changed; the joint distribution is now simply the marginal distribution of `y`, since `x` is fixed. This is a strikingly different relationship than when we simply conditioned the observational distribution.
 
-[figure: interventional histogram]
-
-Further, the relationship between x and y has changed; the joint distribution is now simply the marginal distribution of `y`, since `x` is fixed. This is a strikingly different relationship than when we simply conditioned the observational distribution.
-
-[figure: interventional scatterplot]
+![Left: We have intervened to fix x in the data generating process, which changes z, but not y. Right: When we intervened on x, the joint distribution of x and y became just the marginal distribution of y.](figures/scm-intervened.png)
 
 :::
 
@@ -248,7 +245,7 @@ Interpretability techniques such as LIME provide important insights into models,
 
 Often, this causal knowledge is not formally specified in a graph, and we simply call it “domain knowledge,” or expertise. We have emphasized what the _model_ cannot do, in order to make the technical point clear, but in reality, anyone working with the model would naturally apply their own expertise. The move from that to a causal model requires formally encoding the assumptions we make all the time and verifying that the expected statistical relationships hold in our observed data (and if possible, experimenting). Doing so would give us an understanding of the cause-effect relationships in our system, and the ability to reason quantitatively about the effect of interventions.
 
-![figure: people making assumptions](figures/ff13-11.png)
+![](figures/ff13-11.png)
 
 Constructing a useful causal model of churn is a complex undertaking, requiring both deep domain knowledge and a detailed technical understanding of causal inference.^[ Alas, it requires a far more detailed technical knowledge than we can provide in this report. We recommend the textbook [Causal Inference in Statistics: A Primer](http://bayes.cs.ucla.edu/PRIMER/) for a succinct introduction to Structural Causal Models. An abbreviated overview ([Causal Inference in Statistics: An Overview](https://ftp.cs.ucla.edu/pub/stat_ser/r350.pdf)) is freely available as a PDF. The textbook [Elements of Causal Inference](https://mitpress.mit.edu/books/elements-causal-inference) (available through Open Access) also covers structural causal models, with additional links to machine learning.] In Chapter 3, we will discuss some techniques that are bridging the gap between a full causal model, and the supervised learning setup we use in problems like churn prediction.
 
@@ -283,6 +280,8 @@ The independence relationships implied by a graph can be used for causal discove
 It is not, in general, possible to _prove_ a causal graph, since different graphs can result in the same observed and even interventional distributions. The difficulty of confirming a causal relationship means that we should always proceed with caution when making causal claims. It is best to think of causal models as giving results _conditional on a set of causal assumptions_. Two nodes that are not directly connected in the causal graph are assumed to be independent in the data generating process, except insofar as the causal relations described above (or combinations of them) induce a statistical dependence.
 
 The validity of the results depends on the validity of the assumptions. Of course, we face the same situation in all machine learning work, and it is to be expected that stronger, causal claims require stronger assumptions than merely observational claims.
+
+![Sometimes it can be difficult to establish the causal direction even in very simple graphs.](figures/ff13-23.png)
 
 One case where we may be able to write down the true causal graph is when we have ourselves created the system. For instance, a manufacturing line may have a sufficiently deterministic process that it is possible to write down a precise graph encoding which parts move from which machine to another. If we were to model the production of faulty parts, that graph would be a good basis for the causal graph, since a machine that has not processed a given faulty part is unlikely to be responsible for the fault, and causal graphs encode exactly these independences.
 

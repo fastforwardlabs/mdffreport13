@@ -10,5 +10,3 @@ However, there are fundamental limits to reasoning based on prediction alone. Fo
 Even for purely predictive systems, very much the forte of supervised learning, applying some causal thinking brings benefits. Causal relationships are by their definition _invariant_, meaning they hold true across different circumstances and environments. This is a very desirable property for machine learning systems, where we often predict on data that we have not seen in training, and need them to be adaptable and robust.
 
 The intersection of causal inference and machine learning is a rapidly expanding area of research. It is already yielding capabilities that are ready for mainstream adoption, and can help us build more robust, reliable and fair machine learning systems. This report introduces the reader to causal reasoning as it pertains to much data science and machine learning work, with a focus on removing the _conceptual_ barriers to understanding. Along with the accompanying prototype, we show how even classic machine learning problems, like image classification, can benefit from the tools of causal inference.
-
-![figure: chicken and egg](figures/ff13-23.png)
