@@ -6,7 +6,7 @@ Machine learning is playing an increasingly critical role in our society. Decisi
 
 Even without employing the full machinery of causal inference, when one approaches a new problem, it can be informative to try to write down the causal graph. This forces us to confront our assumptions about a system. It also allows someone else to understand our assumptions, and gives a precise framework to debate.
 
-![figure: people arguing over which direction an arrow goes](figures/ff13-22.png)
+![Writing down a causal graph provides a principled way to specify and discuss causal assumptions.](figures/ff13-22.png)
 
 Making our assumptions explicit aids transparency, which is a win. However, it doesn’t protect against bad assumptions. Establishing causal relationships is hard. Unless we are able to perform sufficient experiments to validate our hypotheses, causal reasoning from observational data is subject to untested (sometimes untestable) assumptions.
 
@@ -31,7 +31,5 @@ That said, the difficulty lies in constructing the causal graph. A causal graph 
 An interesting idea is proposed in the final section of the IRM paper: treating groups over which we want fairness as the environments. When we seek to learn an invariant model (be that by ICP or IRM), we are explicitly trying to learn a model that performs optimally in different environments. We could construct those environments by separating out groups having different values for protected attributes. Then, by learning a model that seeks to perform optimally in each environment, we are explicitly trying to guarantee the best performance for each protected attribute.
 
 Said differently, invariant features are exactly those that are consistent across groups. Consider again a bank granting loans, this time directly to individuals. The bank does not wish to discriminate on the basis of protected attributes. By treating the protected attributes as the groups, they are looking to learn what impacts loan defaulting invariantly across those groups.
-
-[figure: different types of cow]
 
 The idea of learning an invariant predictor across environments is that the representation used is capturing something true about the generative process of the data. This representation would be, to some degree, _disentangled_, in the sense that each dimension of the representation (a vector) should correspond to something meaningful. [On the Fairness of Disentangled Representations](https://arxiv.org/abs/1905.13662) shows experimentally that disentangled representations improve fairness in downstream uses.

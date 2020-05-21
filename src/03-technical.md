@@ -32,7 +32,7 @@ Unfortunately, it’s rarely possible to know whether the data generating proces
 
 This problem is not academic. [Recognition in Terra Incognita](https://arxiv.org/abs/1807.04975) points this out in humorous fashion (see also [Unbiased Look at Dataset Bias](http://people.csail.mit.edu/torralba/publications/datasets_cvpr11.pdf)). The papers highlight that computer vision systems trained for visual recognition of objects, animals and people can utterly fail to recognise the same objects in different contexts. A cow on the slopes of an alpine field is easily recognised, but a cow on a beach is not noticed at all, or poorly classified as a generic “mammal.”
 
-[figure: terra incognita cows]
+![Figure from [Recognition in Terra Incognita](https://arxiv.org/abs/1807.04975), where annotations were provided by [ClarifAI.com](https://www.clarifai.com/).](figures/terra-incognita.png)
 
 These failures should not come as a surprise to us! Supervised machine learning is _designed_ to exploit correlations between features to gain predictive performance, and cows and alpine pastures are highly correlated. Neural networks are a very flexible class of models that encode the invariants of the data set they’re trained on. If cows dominantly appear on grass, we should expect this to be learned.
 
@@ -60,9 +60,9 @@ How can we go about creating such a model? We could simply train our model with 
 
 The connection between causality and invariance is well established. In fact, causal relationships are by their nature invariant. The way many intuitive causal relationships are established is by observing that the relationship holds all the time, in all circumstances. Consider how physical laws are discovered. They are found by performing a series of experiments in different conditions, and monitoring which relationships hold, and what their functional form is. In the process of discovering nature’s laws, we will perform some tests that do not show the expected result. In cases where a law does not hold, this gives us information to refine the law to something that is invariant across environments.^[The scientific process of iterated hypothesis and experimentation can also be applied to constructing a causal model for business purposes. The popular George Edward Box quote is pertinent here: “all models are wrong, but some are useful”.]
 
-![figure: boiling water](figures/ff13-12.png)
+![We learn causal relationships by observing under different experimental conditions. Causal relationships are those that are invariant across the environments created by these conditions.](figures/ff13-12.png)
 
-For example, water boils at 100 degrees Celsius. We could observe that everywhere, and write a simple causal graph: temperature &rarr; water boiling. We have learned a relationship that is invariant across all the environments we have observed.
+For example, water boils at 100&deg; Celsius (212&deg; Fahrenheit). We could observe that everywhere, and write a simple causal graph: temperature &rarr; water boiling. We have learned a relationship that is invariant across all the environments we have observed.
 
 Then, a new experiment conducted on top of a tall mountain reveals that on the mountain, water boils at a slightly lower temperature. After some more experimentation, we improve our causal model, by realising that in fact, both temperature and pressure affect the boiling point of water, and the true invariant relationship is more complicated.
 
@@ -128,7 +128,7 @@ Said differently, the idea is that there is a latent causal structure behind the
 
 The idea of a latent causal system generating observed features is particularly useful as a view of computer vision problems. Computer vision researchers have long studied the generative processes involved in moving from real world objects to pixel representations.^[Longer than you may think! See, for instance, [Machine perception of three-dimensional solids](https://dspace.mit.edu/handle/1721.1/11589), published in 1963.] It’s instructive to inspect the causal structure of a dataset of cow pictures.
 
-![figure: causal direction with cows](figures/ff13-13.png)
+![When the features are the causes of the target, we say we are learning in the causal direction. When effects are the features, we are learning in the anti-causal direction.](figures/ff13-13.png)
 
 In nature, cows exist in fields and on beaches, and we have an intuitive understanding that the cow itself and the ground are different things. A neural network trying to predict the presence of a cow in an image could be called an “anti-causal” learning problem, because the direction of causation is the opposite of the direction of prediction. The presence of a cow causes certain pixel patterns, but pixels are the input to the network, and the presence of a cow is the output.
 
@@ -142,9 +142,9 @@ Learning in the causal direction explains some of the success of supervised lear
 
 To learn an invariant predictor, we must provide the IRM algorithm with data from multiple environments. As in ICP, these environments take the form of datasets, and as such the environments must be discrete. We need not specify the graphical or interventional structure associated with the environments. The motivating example of the IRM paper asks us to consider a machine learning system to distinguish cows from camels, highlighting a similar problem to that which [Recognition in Terra Incognita](https://arxiv.org/abs/1807.04975) does - animals being classified based on their environment, rather than the animal. In this case, cows on sand may be misclassified as camels, due to the spurious correlations absorbed by computer vision systems.
 
-![figure: two environments into one target](figures/ff13-18.png)
+![In the IRM setup, we feed the algorithm data from multiple environments, and we must be explicit about which environment a data point belongs to.](figures/ff13-18.png)
 
-Simply providing data from multiple environments is not enough. The problem of learning the optimal classifier in multiple environments is a bi-level constrained optimization problem, in which we must simultaneously find the optimal data representation and optimal classifier across multiple separate datasets. IRM reduces the problem to a single optimization loop, using a trick of introducing a constant classifier and introducing a new penalty term to the loss function.
+Simply providing data from multiple environments is not enough. The problem of learning the optimal classifier in multiple environments is a bi-level constrained optimization problem, in which we must simultaneously find the optimal data representation and optimal classifier across multiple separate datasets. IRM reduces the problem to a single optimization loop, with the trick of using a constant classifier and introducing a new penalty term to the loss function.
 
 ```
 IRM loss = sum over environments (error + penalty)
@@ -160,7 +160,7 @@ As a baseline, we perform regular supervised learning to learn a binary classifi
 
 The trouble arises when we want to identify a cow on snow, and find that our classifier did not really learn to identify a cow. It learned to identify grass. The holdout performance of our model in any new environment we haven’t trained on will be poor.
 
-![figure: three cows as input to model, predicting cow, polar bear and camel](figures/ff13-19.png)
+![If we rely on empirical risk minimization, we learn spurious correlations between animals and their environments.](figures/ff13-19.png)
 
 With IRM, we perform the training across (at least) two environments, and include the penalty term for each in the loss. We’ll almost certainly find that our performance in the training environments is reduced. However, because we have encouraged the learning of invariant features that transfer across environments, we’re more likely to be able to identify cows on snow. In fact, the very reason our performance in training is reduced is that we’ve not absorbed so many spurious correlations that would hurt prediction in new environments.
 
@@ -176,10 +176,10 @@ However, there is no panacea, and IRM comes with some challenges.
 
 Often, the dataset that we use in a machine learning project is collected well ahead of time, and may have been collected for an entirely different purpose. Even when a well-labeled dataset that is amenable to the problem exists, it is seldom accompanied by detailed metadata (by which we mean information about the information). As such, we often do not have information about the environment in which the data was collected.
 
-![figure: varied dataset with no metadata on environment](figures/ff13-20.png)
+![Most datasets are collected in a variety of environments, and without the metadata necessary to separate them. This presents a challenge for invariance-based approaches.](figures/ff13-20.png)
 
 Another challenge is finding data from sufficiently diverse environments. If the environments are similar, IRM will be unlikely to learn features that generalize to environments that are different. This is both a blessing and a curse - on the one hand, we do not need to have perfectly separated environments to benefit from IRM, but on the other, we are limited by the diversity of environments. If a feature appears to be a good predictor in all the environments we have, IRM will not be able to distinguish that from a true causal feature. In general, the more environments we have, and the more diverse they are, the better IRM will do at learning an invariant predictor, and the closer we get to a causal representation.
 
-![figure: dataset imbalance between environments](figures/ff13-21.png)
+![IRM relies on representative data from diverse environments. If we cannot collect enough data from sufficiently diverse environments, we may still learn spurious correlations.](figures/ff13-21.png)
 
 No model is perfect, and whether or not one is appropriate to use depends on the objective. IRM is more likely to produce an invariant predictor, with good out-of-distribution performance, than empirical risk minimization (regular supervised learning), but doing so will come at the expense of predictive performance in the training environment. It’s entirely possible that for a given application, we are very sure that the data in the eventual test distribution (“in the wild”) will be distributed in the same way as our training data. Further, we may know that all we want to do with the resulting model is predict, not intervene. If both these things are true, we should  stick to supervised learning with empirical risk minimization and exploit all the spurious correlations we can.
