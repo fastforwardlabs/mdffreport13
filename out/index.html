@@ -535,7 +535,7 @@ h2 {
           <h1 id="causality-for-machine-learning">Causality for Machine Learning</h1>
 <p><div class="table-of-contents"><div id="toc-header" style="display: flex; font-weight: bold; text-transform: uppercase;">
      <div><button id="toggle_contents" style="padding-left: 0.5ch; padding-right: 0.5ch; cursor: pointer; position: relative; top: -1px;">☰</button><span id="contents-label" style="margin-left: 0;"> Contents</span></div>
-  </div><ul><li><a href="#introduction">Introduction</a></li><li><a href="#background%3A-causal-inference">Background: Causal Inference</a><ul><li><a href="#why-are-we-interested-in-causal-inference%3F">Why are we interested in causal inference?</a></li><li><a href="#the-ladder-of-causation">The ladder of causation</a></li><li><a href="#from-correlation-to-causation">From correlation to causation</a></li><li><a href="#from-prediction-to-intervention">From prediction to intervention</a></li><li><a href="#how-do-we-know-which-graph-to-use%3F">How do we know which graph to use?</a></li><li><a href="#recap">Recap</a></li></ul></li><li><a href="#causality-and-invariance">Causality and invariance</a><ul><li><a href="#the-great-lie-of-machine-learning">The great lie of machine learning</a></li><li><a href="#dangers-of-spurious-correlations">Dangers of spurious correlations</a></li><li><a href="#invariance">Invariance</a></li><li><a href="#invariant-causal-prediction">Invariant Causal Prediction</a></li><li><a href="#invariant-risk-minimization">Invariant Risk Minimization</a></li><li><a href="#how-irm-works">How IRM works</a></li></ul></li><li><a href="#prototype">Prototype</a></li><li><a href="#landscape">Landscape</a><ul><li><a href="#use-cases">Use Cases</a></li><li><a href="#tools">Tools</a></li></ul></li><li><a href="#ethics">Ethics</a><ul><li><a href="#causal-graphs-make-assumptions-explicit">Causal graphs make assumptions explicit</a></li><li><a href="#omitting-protected-attributes-is-not-enough">Omitting protected attributes is not enough</a></li><li><a href="#invariance-as-a-route-to-fairness">Invariance as a route to fairness</a></li></ul></li><li><a href="#future">Future</a><ul><li><a href="#comparable-approaches">Comparable approaches</a></li><li><a href="#looking-ahead">Looking ahead</a></li></ul></li><li><a href="#conclusion">Conclusion</a></li></ul></div></p>
+  </div><ul><li><a href="#introduction">Introduction</a></li><li><a href="#background%3A-causal-inference">Background: Causal Inference</a><ul><li><a href="#why-are-we-interested-in-causal-inference%3F">Why are we interested in causal inference?</a></li><li><a href="#the-ladder-of-causation">The ladder of causation</a></li><li><a href="#from-correlation-to-causation">From correlation to causation</a></li><li><a href="#from-prediction-to-intervention">From prediction to intervention</a></li><li><a href="#how-do-we-know-which-graph-to-use%3F">How do we know which graph to use?</a></li><li><a href="#recap">Recap</a></li></ul></li><li><a href="#causality-and-invariance">Causality and invariance</a><ul><li><a href="#the-great-lie-of-machine-learning">The great lie of machine learning</a></li><li><a href="#dangers-of-spurious-correlations">Dangers of spurious correlations</a></li><li><a href="#invariance">Invariance</a></li><li><a href="#invariant-causal-prediction">Invariant Causal Prediction</a></li><li><a href="#invariant-risk-minimization">Invariant Risk Minimization</a></li><li><a href="#how-irm-works">How IRM works</a></li></ul></li><li><a href="#prototype">Prototype</a><ul><li><a href="#the-wildcam-dataset">The Wildcam dataset</a></li><li><a href="#experimental-set-up">Experimental set-up</a></li><li><a href="#results">Results</a></li></ul></li><li><a href="#landscape">Landscape</a><ul><li><a href="#use-cases">Use Cases</a></li><li><a href="#tools">Tools</a></li></ul></li><li><a href="#ethics">Ethics</a><ul><li><a href="#causal-graphs-make-assumptions-explicit">Causal graphs make assumptions explicit</a></li><li><a href="#omitting-protected-attributes-is-not-enough">Omitting protected attributes is not enough</a></li><li><a href="#invariance-as-a-route-to-fairness">Invariance as a route to fairness</a></li></ul></li><li><a href="#future">Future</a><ul><li><a href="#comparable-approaches">Comparable approaches</a></li><li><a href="#looking-ahead">Looking ahead</a></li></ul></li><li><a href="#conclusion">Conclusion</a></li></ul></div></p>
 <h2 id="introduction">Introduction</h2>
 <p>In recent years, machine learning has sufficiently advanced to provide novel capabilities, not least of which giving us sophisticated, computable representations of text and images. These capabilities have enabled new products, such as image search based on the image content, automatic translation between many languages and even synthesis of realistic images and voice. Simultaneously, machine learning has seen widespread adoption in the enterprise for classic use-cases, for instance, predicting customer churn, loan defaulting and manufacturing equipment failure. Where machine learning has been successful, it has been extraordinarily so.</p>
 <p>In many cases, that success can be attributed to supervised learning on large volumes of training data (combined with extensive computation). Broadly, supervised learning systems excel at one task: <em>prediction</em>. When the goal is to predict an outcome, and we have many examples of that outcome arising, and the features associated with it, we may turn to supervised learning.
@@ -814,8 +814,222 @@ Interpretability techniques such as LIME provide important insights into models,
 <figure><img src="figures/ff13-21.png" alt="IRM relies on representative data from diverse environments. If we cannot collect enough data from sufficiently diverse environments, we may still learn spurious correlations."><figcaption>IRM relies on representative data from diverse environments. If we cannot collect enough data from sufficiently diverse environments, we may still learn spurious correlations.</figcaption></figure>
 <p>No model is perfect, and whether or not one is appropriate to use depends on the objective. IRM is more likely to produce an invariant predictor, with good out-of-distribution performance, than empirical risk minimization (regular supervised learning), but doing so will come at the expense of predictive performance in the training environment. It’s entirely possible that for a given application, we are very sure that the data in the eventual test distribution (“in the wild”) will be distributed in the same way as our training data. Further, we may know that all we want to do with the resulting model is predict, not intervene. If both these things are true, we should  stick to supervised learning with empirical risk minimization and exploit all the spurious correlations we can.</p>
 <h2 id="prototype">Prototype</h2>
-<p>Blah.</p>
-<figure><img src="figures/ff13-27.png" alt="figure: raccoons and coyotes"><figcaption>figure: raccoons and coyotes</figcaption></figure>
+<p>The promise of Invariant Risk Minimization (IRM), namely greatly improved out-of-distribution generalization using a representation that is closer-to-causal, is tempting. The paper performs some experiments that clearly show the method works when applied to an artificial structural causal model. Further an experiment in which an artificial spurious correlation is injected into the MNIST dataset (by coloring the images) is detailed, and works.</p>
+<p>In order to gain a better understanding of the algorithm and investigate further we wanted to test the same technique in a less artificial scenario, on a natural image dataset.</p>
+<h3 id="the-wildcam-dataset">The Wildcam dataset</h3>
+<p>The iWildCam 2019 dataset (from The iWildCam 2019 Challenge Dataset) consists of wildlife images taken using camera traps. In particular, the dataset contains the Caltech Camera Traps (CCT) dataset, on which we focus. The CCT dataset contains 292,732 images, with each image labeled as containing one of 13 animals, or none. The images are collected from 143 locations, and feature a variety of weather conditions and all times of day. The challenge is to identify the animal present in the image.</p>
+<figure><img src="figures/wildcam-coyote-raccoon.png" alt="Left, a coyote in its natural environment. Right, a raccoon in the same location at night. Image credit: The iWildCam 2019 Challenge Dataset, used under the Community Data License Agreement."><figcaption>Left, a coyote in its natural environment. Right, a raccoon in the same location at night. Image credit: The <a href="https://arxiv.org/abs/1907.07617">iWildCam 2019 Challenge Dataset</a>, used under the <a href="https://cdla.io/permissive-1-0/">Community Data License Agreement</a>.</figcaption></figure>
+<h3 id="experimental-set-up">Experimental set-up</h3>
+<p>This set-up maps naturally to the environmental splits used in IRM. Each camera trap location is a distinct physical environment, which is roughly consistent, allowing for seasonal, weather and day/night patterns. No two environments are the same, though the camera locations are spread around roughly the same geographic region (the America Southwest).</p>
+<p>The objects of interest in the dataset are animals, which are basically invariant across environments: a raccoon looks like a raccoon in the mountains and in your backyard (though the particular raccoon may be different). The images are not split evenly between environments, since there is more animal activity in some places than others. Nor are the animal species evenly distributed among cameras. Some cameras will primarily produce images of one species or another, depending on the animals active in the area.</p>
+<p>If we were to naively train a model using empirical risk on a subset of cameras, we could well end up learning exactly those class imbalances. If 99% of the images from camera 1 are labeled as deer, then we could have a 99% accurate classifier by learning to recognize the fallen tree that is present only in camera 1, rather than the deer themselves. Clearly such a classifier has not really learned to recognize deer, and would be useless for predicting in another environment.</p>
+<p>We want to learn to recognize the animals themselves. The IRM setup seems ideally suited to address this challenge.</p>
+<p>To validate the approach, we restricted our experiment to only three cameras and two animal species, which were randomly chosen. Of the three cameras, two were used as training environments, and one as a held-out environment for testing. The task was binary classification: distinguish coyotes from raccoons. We used Resnet18, a pretrained classifier trained on the much larger ImageNet dataset as a feature extractor with a final fully connected layer with sigmoid output, which we tuned to the problem at hand.</p>
+<p>Each of the environments contained images of both coyotes and racoons. Even this reduced dataset exhibits several challenges typical to real world computer vision: some images are dark, some are blurred, some are labelled as containing an animal when only the foot of the animal is visible, and some feature nothing but a patch of fur covering the lens. We saw some success simply ignoring these problems, but ultimately manually selected only those images clearly showing an identifiable coyote or raccoon.</p>
+<h3 id="results">Results</h3>
+<p>When tackling any supervised learning problem, it’s a good idea to set up a simple baseline against which to compare performance. In the case of a binary classifier, an appropriate baseline model is to always predict the majority class of the training set. The three environments had a class balance as shown in the table below. The majority class in both train environments is coyote, so our baseline accuracy is the accuracy if we always predict the animal is a coyote, regardless of environment or input image.</p>
+<div style="width: 100%; overflow-x: auto;"><table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align:center">Train environment 1</th>
+<th style="text-align:center">Train environment 2</th>
+<th style="text-align:center">Test</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Coyotes</td>
+<td style="text-align:center">582</td>
+<td style="text-align:center">512</td>
+<td style="text-align:center">144</td>
+</tr>
+<tr>
+<td>Raccoons</td>
+<td style="text-align:center">276</td>
+<td style="text-align:center">241</td>
+<td style="text-align:center">378</td>
+</tr>
+<tr>
+<td>Baseline accuracy</td>
+<td style="text-align:center">68%</td>
+<td style="text-align:center">68%</td>
+<td style="text-align:center">28%</td>
+</tr>
+</tbody>
+</table></div>
+<p>When we treat the problem with empirical risk minimization - minimizing the cross entropy between classes - we found good performance in the train environments, but very poor performance in the test environment. We report the metrics over 120 epochs of training in the table below.</p>
+<div style="width: 100%; overflow-x: auto;"><table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">ERM</th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center">IRM</th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+<th style="text-align:center"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">epoch</td>
+<td style="text-align:center">train accuracy</td>
+<td style="text-align:center">test accuracy</td>
+<td style="text-align:center">test precision</td>
+<td style="text-align:center">test recall</td>
+<td style="text-align:center">train accuracy</td>
+<td style="text-align:center">test accuracy</td>
+<td style="text-align:center">test precision</td>
+<td style="text-align:center">test recall</td>
+</tr>
+<tr>
+<td style="text-align:center">0</td>
+<td style="text-align:center">30.8%</td>
+<td style="text-align:center">27.0%</td>
+<td style="text-align:center">57.7%</td>
+<td style="text-align:center">4.0%</td>
+<td style="text-align:center">30.8%</td>
+<td style="text-align:center">26.9%</td>
+<td style="text-align:center">56.0%</td>
+<td style="text-align:center">3.7%</td>
+</tr>
+<tr>
+<td style="text-align:center">10</td>
+<td style="text-align:center">68.2%</td>
+<td style="text-align:center">28.1%</td>
+<td style="text-align:center">0.0%</td>
+<td style="text-align:center">0.0%</td>
+<td style="text-align:center">68.2%</td>
+<td style="text-align:center">28.0%</td>
+<td style="text-align:center">0.0%</td>
+<td style="text-align:center">0.0%</td>
+</tr>
+<tr>
+<td style="text-align:center">20</td>
+<td style="text-align:center">84.0%</td>
+<td style="text-align:center">35.5%</td>
+<td style="text-align:center">73.4%</td>
+<td style="text-align:center">18.3%</td>
+<td style="text-align:center">79.6%</td>
+<td style="text-align:center">26.4%</td>
+<td style="text-align:center">64.3%</td>
+<td style="text-align:center">2.4%</td>
+</tr>
+<tr>
+<td style="text-align:center">30</td>
+<td style="text-align:center">84.5%</td>
+<td style="text-align:center">31.5%</td>
+<td style="text-align:center">65.9%</td>
+<td style="text-align:center">7.1%</td>
+<td style="text-align:center">81.3%</td>
+<td style="text-align:center">29.7%</td>
+<td style="text-align:center">60.0%</td>
+<td style="text-align:center">1.6%</td>
+</tr>
+<tr>
+<td style="text-align:center">40</td>
+<td style="text-align:center">86.2%</td>
+<td style="text-align:center">36.1%</td>
+<td style="text-align:center">74.0%</td>
+<td style="text-align:center">19.6%</td>
+<td style="text-align:center">85.5%</td>
+<td style="text-align:center">34.0%</td>
+<td style="text-align:center">72.4%</td>
+<td style="text-align:center">16.7%</td>
+</tr>
+<tr>
+<td style="text-align:center">50</td>
+<td style="text-align:center">86.3%</td>
+<td style="text-align:center">31.7%</td>
+<td style="text-align:center">73.6%</td>
+<td style="text-align:center">10.3%</td>
+<td style="text-align:center">85.6%</td>
+<td style="text-align:center">39.2%</td>
+<td style="text-align:center">75.2%</td>
+<td style="text-align:center">24.9%</td>
+</tr>
+<tr>
+<td style="text-align:center">60</td>
+<td style="text-align:center">87.9%</td>
+<td style="text-align:center">35.0%</td>
+<td style="text-align:center">73.6%</td>
+<td style="text-align:center">14.0%</td>
+<td style="text-align:center">86.7%</td>
+<td style="text-align:center">41.2%</td>
+<td style="text-align:center">76.0%</td>
+<td style="text-align:center">27.5%</td>
+</tr>
+<tr>
+<td style="text-align:center">70</td>
+<td style="text-align:center">88.4%</td>
+<td style="text-align:center">30.5%</td>
+<td style="text-align:center">74.5%</td>
+<td style="text-align:center">10.1%</td>
+<td style="text-align:center">85.8%</td>
+<td style="text-align:center">43.6%</td>
+<td style="text-align:center">76.2%</td>
+<td style="text-align:center">28.8%</td>
+</tr>
+<tr>
+<td style="text-align:center">90</td>
+<td style="text-align:center">89.6%</td>
+<td style="text-align:center">29.5%</td>
+<td style="text-align:center">74.4%</td>
+<td style="text-align:center">7.7%</td>
+<td style="text-align:center">85.8%</td>
+<td style="text-align:center">59.4%</td>
+<td style="text-align:center">81.2%</td>
+<td style="text-align:center">56.1%</td>
+</tr>
+<tr>
+<td style="text-align:center">80</td>
+<td style="text-align:center">89.3%</td>
+<td style="text-align:center">30.6%</td>
+<td style="text-align:center">72.7%</td>
+<td style="text-align:center">6.3%</td>
+<td style="text-align:center">86.5%</td>
+<td style="text-align:center">51.9%</td>
+<td style="text-align:center">80.3%</td>
+<td style="text-align:center">39.9%</td>
+</tr>
+<tr>
+<td style="text-align:center">100</td>
+<td style="text-align:center">90.6%</td>
+<td style="text-align:center">29.9%</td>
+<td style="text-align:center">71.9%</td>
+<td style="text-align:center">6.1%</td>
+<td style="text-align:center">84.9%</td>
+<td style="text-align:center">75.1%</td>
+<td style="text-align:center">83.1%</td>
+<td style="text-align:center">79.4%</td>
+</tr>
+<tr>
+<td style="text-align:center">110</td>
+<td style="text-align:center">90.0%</td>
+<td style="text-align:center">29.3%</td>
+<td style="text-align:center">75.0%</td>
+<td style="text-align:center">5.6%</td>
+<td style="text-align:center">84.7%</td>
+<td style="text-align:center">75.2%</td>
+<td style="text-align:center">83.2%</td>
+<td style="text-align:center">84.1%</td>
+</tr>
+<tr>
+<td style="text-align:center">120</td>
+<td style="text-align:center">91.3%</td>
+<td style="text-align:center">33.2%</td>
+<td style="text-align:center">75.6%</td>
+<td style="text-align:center">9.0%</td>
+<td style="text-align:center">85.0%</td>
+<td style="text-align:center">78.7%</td>
+<td style="text-align:center">83.5%</td>
+<td style="text-align:center">88.4%</td>
+</tr>
+</tbody>
+</table></div>
 <h2 id="landscape">Landscape</h2>
 <p>Causality spans a broad area of topics, including using causal insights to improve machine learning methods, adapting it for high-dimensional datasets and applying them for better data-driven decision making in real-world contexts. We also discussed in Chapter 3 how the collected data is rarely an accurate reflection of the population, and hence may fail to generalize in different environments or new datasets. Methods based on invariance show promise in addressing out-of-distribution generalization.</p>
 <h3 id="use-cases">Use Cases</h3>
