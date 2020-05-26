@@ -453,7 +453,30 @@ h2 {
       display: inline;
       position: relative;
     }
-  }
+   code {
+      font-family: "Plex Mono", monospace;
+      font-size: 16px;
+      background: rgba(0,0,0,0.125);
+      padding-top: 4px;
+      padding-bottom: 2px;
+      padding-left: 4px;
+      padding-right: 4px;
+   }
+   pre {
+      background: rgba(0,0,0,0.125);
+      font-size: 14px;
+      line-height: 1.25;
+      padding-left: 8px;
+      padding-right: 4px;
+      padding-top: 8px;
+      padding-bottom: 8px;
+   }
+    pre code {
+      background: transparent;
+      font-size: 13px;
+      line-height: 1.25;
+   }
+ }
 }
 </style>`
 }
