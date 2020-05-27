@@ -1,6 +1,6 @@
 ## Background: Causal Inference
 
-In this chapter, we discuss the essentials of causal reasoning, particularly in how it differs from supervised learning, and give an informal introduction to structural causal models. Grasping the basic notions of causal modeling allows for a much richer understanding of invariance and generalization, which we discuss in the next chapter.
+In this chapter, we discuss the essentials of causal reasoning (particularly in how it differs from supervised learning) and give an informal introduction to structural causal models. Grasping the basic notions of causal modeling allows for a much richer understanding of invariance and generalization, which we discuss in the next chapter.
 
 ### Why are we interested in causal inference?
 
@@ -8,7 +8,7 @@ Imagine a bank that would like to reduce the number of business loans which defa
 
 ![A bank would like to decide which business loans to grant based on true, causal relationships.](figures/ff13-01.png)
 
-It may be that we find small loans are more likely to default than larger loans. One might naively assume that the bank ought to stop making small loans. However, perhaps it is really the case that smaller businesses are more likely to fail than large businesses, and _also_ more likely to apply for small loans. In this case, the true causal relationship is between the size of the _business_ and defaulting, and not between the size of the _loan_ and defaulting. If so, our policy decisions should be influenced by business size, rather than loan size.
+It may be that we find small loans are more likely to default than larger loans. One might naively assume that the bank ought to stop making small loans. However, perhaps it is really the case that smaller businesses are more likely to fail than large businesses, and _also_ more likely to apply for small loans. In this case, the true causal relationship is between the size of the _business_ and defaulting, and not between the size of the _loan_ and defaulting. If this is so, our policy decisions should be influenced by business size, rather than loan size.
 
 Unfortunately, supervised learning alone cannot tell us which is true. If we include both loan size and business size as features in our model, we will simply find that they are both related to loan defaulting, to some extent. While that insight is true - as they are both statistically related to defaulting - which _causes_ defaulting is a separate question, and the one to which we want the answer.
 
@@ -56,38 +56,40 @@ In general, this is not possible, and we must at least impose some modeling assu
 
 ### The ladder of causation
 
-In [The Book of Why](http://bayes.cs.ucla.edu/WHY/), Judea Pearl, author of much foundational work in causality, describes three kinds of reasoning we can perform as the rungs on a ladder. These rungs describe when we need causality, and what it buys us.^[See also Pearl’s article: [The Seven Tools of Causal Inference, with Reflections on Machine Learning](https://cacm.acm.org/magazines/2019/3/234929-the-seven-tools-of-causal-inference-with-reflections-on-machine-learning/fulltext).]
+In [The Book of Why](http://bayes.cs.ucla.edu/WHY/), Judea Pearl, an author of much foundational work in causality, describes three kinds of reasoning we can perform as rungs on a ladder. These rungs describe when we need causality, and what it buys us.^[See also Pearl’s article: [The Seven Tools of Causal Inference, with Reflections on Machine Learning](https://cacm.acm.org/magazines/2019/3/234929-the-seven-tools-of-causal-inference-with-reflections-on-machine-learning/fulltext).]
 
 ![The ladder of causation, as described in [The Book of Why](http://bayes.cs.ucla.edu/WHY/).](figures/ff13-06.png)
 
-On the **first rung**, we can do **statistical and predictive reasoning**. This covers most (but not all) of what we do in machine learning. We may make very sophisticated forecasts, infer latent variables in complex deep generative models, or cluster data according to subtle relations - all of these things sit on rung one.
+On the **first rung**, we can do **statistical and predictive reasoning**. This covers most (but not all) of what we do in machine learning. We may make very sophisticated forecasts, infer latent variables in complex deep generative models, or cluster data according to subtle relations. All of these things sit on rung one.
 
-_Example: a bank wishes to predict which of its current business loans are likely to default, so it can make financial forecasts accounting for likely losses._
+_Example: a bank wishes to predict which of its current business loans are likely to default, so it can make financial forecasts that account for likely losses._
 
 The **second rung** is **interventional reasoning**. Interventional reasoning allows us to predict what will happen when a system is changed. This enables us to describe what characteristics are particular to the exact observations we’ve made, and what should be invariant across new circumstances. This kind of reasoning requires a _causal_ model. Intervening is a fundamental operation in causality, and we’ll discuss both interventions and causal models in this chapter.
 
-_Example: a bank would like to reduce the number of loans which default, and considers changing its policy. Predicting what will happen as a result of this intervention requires that the bank understand the causal relations which affect loan defaulting._
+_Example: a bank would like to reduce the number of loans which default, and considers changing its policies. Predicting what will happen as a result of this intervention requires that the bank understand the causal relations which affect loan defaulting._
 
 The **third rung** is **counterfactual reasoning**. On this rung, we can talk not only about what has happened, but also what would have happened if circumstances were different. Counterfactual reasoning requires a more precisely specified causal model than intervention. This form of reasoning is very powerful, providing a mathematical formulation of computing in alternate worlds where events were different.
 
-_Example: a bank would like to know what the likely return on a loan would have been, had they offered different terms to what they did._
+_Example: a bank would like to know what the likely return on a loan would have been, had they offered different terms than they did._
 
 ![The ladder of causation describes the kind of question we can answer depending on the sophistication of our causal model.](figures/ff13-07.png)
 
-By now, we hopefully agree that there is something to causality, and it has much to offer. However, we have yet to really _define_ causality. We must begin with that most familiar refrain: correlation is not causation.
+By now, we hopefully agree that there is something to causality, and it has much to offer. However, we have yet to really _define_ causality. We must begin with a familiar refrain: correlation is not causation.
 
 
 ### From correlation to causation
 
 #### Spurious correlations
 
-Very many things display correlation. The rooster crows when the sun rises.^[Some farm-experienced members of the CFF team are keen to point out that roosters crow pretty much _all the time_.] The lights turn off when you flick a switch. Global temperatures have risen alarmingly since the 1800s, and meanwhile pirate numbers have dwindled to almost nothing ([Forbes](https://www.forbes.com/sites/erikaandersen/2012/03/23/true-fact-the-lack-of-pirates-is-causing-global-warming/#5cb710453a67)). These examples show us that while correlation can _appear_ as a result of causation, as in the case of the light switch, correlation certainly does not always _imply_ causation, as in the case of the pirates.
+Very many things display correlation. The rooster crows when the sun rises.^[Some farm-experienced members of the CFF team are keen to point out that roosters crow pretty much _all the time_.] The lights turn off when you flick a switch. Global temperatures have risen alarmingly since the 1800s, and meanwhile pirate numbers have dwindled to almost nothing.^[See this article in [Forbes](https://www.forbes.com/sites/erikaandersen/2012/03/23/true-fact-the-lack-of-pirates-is-causing-global-warming/#5cb710453a67)] 
 
-Correlated things are not always related.^[On a technical note, correlation measures only _linear_ association. For instance, `x` squared is uncorrelated with `x`, despite being completely dependent on it. When we say “correlation is not causation,” we really mean “statistical dependence is not causation”.] It’s possible to find many correlations with no readily imaginable causal interaction. The internet treasure [Spurious Correlations](https://www.tylervigen.com/spurious-correlations) collects many amusing examples of this. These spurious correlations most likely arise as a result of small sample size and coincidences that are bound to happen when making many comparisons. We should not be surprised if we find something that has low probability if we try many combinations.
+These examples show us that while correlation can _appear_ as a result of causation, as in the case of the light switch, correlation certainly does not always _imply_ causation, as in the case of the pirates.
+
+Correlated things are not always related.^[On a technical note, correlation measures only _linear_ association. For instance, `x` squared is uncorrelated with `x`, despite being completely dependent on it. When we say “correlation is not causation,” we really mean “statistical dependence is not causation.”] It’s possible to find many correlations with no readily imaginable causal interaction. The internet treasure [Spurious Correlations](https://www.tylervigen.com/spurious-correlations) collects many amusing examples of this. These spurious correlations most likely arise as a result of small sample size and coincidences that are bound to happen when making many comparisons. We should not be surprised if we find something that has low probability if we try many combinations.
 
 ![Figure source: [Spurious Correlations](https://www.tylervigen.com/spurious-correlations).](figures/spurious-correlation.png)
 
-In real world systems, spurious correlations can be cause for serious ethical concerns. For instance, certain characteristics may be associated with individuals or minority groups which make superficial features powerful at a learning task. This can easily embed bias and unfairness into an algorithm based on spurious correlations in a given dataset.
+In real world systems, spurious correlations can be cause for serious ethical concerns. For instance, certain characteristics may be associated with individuals or minority groups, but these particular characteristics are not important to our model. However, the model weights them as important during a learning task. This can easily embed bias and unfairness into an algorithm based on spurious correlations in a given dataset.
 
 #### The Principle of Common Cause
 
@@ -97,16 +99,16 @@ In a posthumous 1956 book, [The Direction of Time](https://www.goodreads.com/boo
 
 Our understanding of causality has evolved, but this language is remarkably similar to what we use now. Let’s discuss how correlation may arise from causation.
 
-We will do this in the framework of Structural Causal Models (SCMs). An SCM is a directed acyclic graph of relationships between variables. The nodes represent variables, and the edges between them point from cause to effect. The value of each variable depends only on its direct parents in the graph (the other variables which point directly into it) and a noise variable encapsulating any environmental interactions we are not modeling. We will examine three fundamental causal structures.
+We will do this in the framework of Structural Causal Models (SCMs). An SCM is a directed acyclic graph of relationships between variables. The nodes represent variables, and the edges between them point from cause to effect. The value of each variable depends only on its direct parents in the graph (the other variables which point directly into it) and a noise variable that encapsulates any environmental interactions we are not modeling. We will examine three fundamental causal structures.
 
 ::: info
 ##### Causal Terminology
 
 A **causal graph** is a directed acyclic graph denoting the dependency between variables.
 
-A **structural causal model** carries more information than a causal graph alone - it also specifies the functional form of dependencies between variables.
+A **structural causal model** carries more information than a causal graph alone. It also specifies the functional form of dependencies between variables.
 
-Remarkably, it’s possible to do much causal reasoning, including calculating the size of causal effects, via the graph alone, without specifying a parametric form for the relationships between causes and effects.
+Remarkably, it’s possible to do much causal reasoning - including a calculation of the size of causal effects - via the graph alone, without specifying a parametric form for the relationships between causes and effects.
 :::
 
 ##### 1. Direct causation
@@ -119,11 +121,11 @@ This setup is immediately reminiscent of supervised learning, where we have a da
 
 ##### 2. Common cause
 
-A common pattern is for a single variable to be the cause of multiple other variables. If a variable Z is a direct cause of both X and Y, we say that Z is a common cause and call the structure a “fork.” For example, unemployment could potentially cause both loan default and reduced consumer spend.
+A common pattern is for a single variable to be the cause of multiple other variables. If a variable, Z, is a direct cause of both X and Y, we say that Z is a common cause and call the structure a “fork.” For example, unemployment could potentially cause both loan default and reduced consumer spend.
 
 ![Two effects appear statistically dependent, but only because of a common cause. If the common cause, Unemployment, is fixed, then Consumer Spend and Loan Default become statistically independent.](figures/ff13-09.png)
 
-Because both consumer spend and loan default depend on unemployment , they will appear correlated. A given value of unemployment will generate some values of consumer spend and loan default, and when unemployment changes, both consumer spend and loan default will change. As such, in the joint distribution of the SCM, the two dependent variables, consumer spend and loan default, will appear statistically related to one another.
+Because both consumer spend and loan default depend on unemployment, they will appear correlated. A given value of unemployment will generate some values of consumer spend and loan default, and when unemployment changes, both consumer spend and loan default will change. As such, in the joint distribution of the SCM, the two dependent variables (consumer spend and loan default) will appear statistically related to one another.
 
 However, if we were to _condition_ on unemployment (for instance, by selecting data corresponding to a fixed unemployment rate), we would see that consumer spend and loan default are independent from one another.
 
@@ -141,14 +143,14 @@ A collider is a node that depends on more than one cause. In this example, loan 
 
 Colliders are different to chains of direct causation and forks because the conditioning behaviour works oppositely. Before any conditioning, commercial credit score and number of liens are unconditionally independent. There is no variable with causal arrows going into both commercial credit score and number of liens, and no arrow linking them directly, so we should not expect a statistical dependency. However, if we condition on the collider, we will induce a conditional dependence between commercial credit score and number of liens.
 
-This may seem a little unintuitive, but we can make sense of it with a little thought experiment. Loan default depends on both commercial credit score and number of liens, so if either of those changes value, the chance of loan default changes. We fix the value of loan default (say, we look only at those loans that did default). Now, if we were to learn anything about the value of commercial credit score, we would know something about the number of liens too; only certain values of number of liens are compatible with the conditioned value of loan defaulting and observed value of commercial credit score. As such, conditioning on a collider induces a spurious correlation between the parent nodes. Conditioning on a collider is exactly selection bias!
+This may seem a bit unintuitive, but we can make sense of it with a little thought experiment. Loan default depends on both commercial credit score and number of liens, so if either of those changes value, the chance of loan default changes. We fix the value of loan default (say, we look only at those loans that did default). Now, if we were to learn anything about the value of commercial credit score, we would know something about the number of liens too; only certain values of number of liens are compatible with the conditioned value of loan defaulting and observed value of commercial credit score. As such, conditioning on a collider induces a spurious correlation between the parent nodes. Conditioning on a collider is exactly selection bias!
 
 
 #### Structural Causal Models, in code
 
 ::: info
 
-The small causal graphs shown above are an intuitive way to reason about causality. Remarkably, we can do much causal reasoning (and calculate causal effects) simply by specifying qualitatively which variables causally influence others with these graphs. In the real world, causal graphs can be large and complex.
+The small causal graphs shown above are an intuitive way to reason about causality. Remarkably, we can do much causal reasoning (and calculate causal effects) with these graphs, simply by specifying qualitatively which variables causally influence others. In the real world, causal graphs can be large and complex.
 
 Of course, there are other ways to encode the information. Given the graph, we can easily write down an expression for the joint distribution: it’s the product of probability distributions for each node conditioned on its direct causal parents. In the case of a collider structure, `x` &rarr; `z` &larr; `y`, the joint distribution is simply `p(x,y,z) = p(x) p(y) p(z|x,y)`. The conditional probability `p(z|x,y)` is exactly what we’re used to estimating in supervised learning!
 
@@ -179,7 +181,7 @@ Each of the variables has an independent random noise associated with it, arisin
 
 Now that we have a model in code, we can see a selection bias effect. If we condition the data to only values of `z` (the collider node) greater than a cutoff (which we can do easily, if inefficiently, by filtering the samples to those where `z > 2.5`), the previously independent `x` and `y` become negatively correlated.
 
-![Left: We have conditioned on z > 2.5 by filtering the samples (note the change of scale), which changes the x and y distributions - they're both shifted right. Right: The conditional joint distribution of x and y, with a line showing a linear fit, which illustrates the induced negative correlation.](figures/scm-conditioned.png)
+![Left: We have conditioned on z > 2.5 by filtering the samples (note the change of scale), which changes the x and y distributions; they're both shifted right. Right: The conditional joint distribution of x and y, with a line showing a linear fit, which illustrates the induced negative correlation.](figures/scm-conditioned.png)
 
 :::
 
