@@ -20,7 +20,7 @@ If we were to naively train a model using empirical risk on a subset of cameras,
 
 We want to learn to recognize the animals themselves. The IRM setup seems ideally suited to address this challenge.
 
-To validate the approach, we restricted our experiment to only three cameras and two animal species, which were randomly chosen. Of the three cameras, two were used as training environments, and one as a held-out environment for testing. The task was binary classification: distinguish coyotes from raccoons. We used Resnet18, a pretrained classifier trained on the much larger ImageNet dataset as a feature extractor with a final fully connected layer with sigmoid output, which we tuned to the problem at hand.
+To validate the approach, we restricted our experiment to only three cameras and two animal species, which were randomly chosen. Of the three cameras, two were used as training environments, and one as a held-out environment for testing. The task was binary classification: distinguish coyotes from raccoons. We used [ResNet18](https://arxiv.org/abs/1512.03385), a pretrained classifier trained on the much larger ImageNet dataset as a feature extractor with a final fully connected layer with sigmoid output, which we tuned to the problem at hand.
 
 Each of the environments contained images of both coyotes and racoons. Even this reduced dataset exhibits several challenges typical to real world computer vision: some images are dark, some are blurred, some are labelled as containing an animal when only the foot of the animal is visible, and some feature nothing but a patch of fur covering the lens. We saw some success simply ignoring these problems, but ultimately manually selected only those images clearly showing an identifiable coyote or raccoon.
 
@@ -34,22 +34,56 @@ When tackling any supervised learning problem, it’s a good idea to set up a si
 | Raccoons          | 276                 | 241                 | 378      |
 | Baseline accuracy | 68%                 | 68%                 | 28%      |
 
-When we treat the problem with empirical risk minimization - minimizing the cross entropy between classes - we found good performance in the train environments, but very poor performance in the test environment. We report the metrics over 120 epochs of training in the table below.
+When we treat the problem with empirical risk minimization - minimizing the cross entropy between classes - we found good performance in the train environments, but very poor performance in the test environment. We report the metrics over 120 epochs of training in the table below. The best test accuracy is achieved at epoch 40, after which ERM begins to overfit. In the case of IRM, we pay a small price in train set accuracy, but get much better test results. Again, reporting the highest test accuracy achieved in 120 epochs (at epoch 120).
 
-|        | ERM            |               |                |             | IRM            |               |                |             |
-|:------:|:--------------:|:-------------:|:--------------:|:-----------:|:--------------:|:-------------:|:--------------:|:-----------:|
-| epoch  | train accuracy | test accuracy | test precision | test recall | train accuracy | test accuracy | test precision | test recall |
-| 0      | 30.8%          | 27.0%         | 57.7%          | 4.0%        | 30.8%          | 26.9%         | 56.0%          | 3.7%        |
-| 10     | 68.2%          | 28.1%         | 0.0%           | 0.0%        | 68.2%          | 28.0%         | 0.0%           | 0.0%        |
-| 20     | 84.0%          | 35.5%         | 73.4%          | 18.3%       | 79.6%          | 26.4%         | 64.3%          | 2.4%        |
-| 30     | 84.5%          | 31.5%         | 65.9%          | 7.1%        | 81.3%          | 29.7%         | 60.0%          | 1.6%        |
-| 40     | 86.2%          | 36.1%         | 74.0%          | 19.6%       | 85.5%          | 34.0%         | 72.4%          | 16.7%       |
-| 50     | 86.3%          | 31.7%         | 73.6%          | 10.3%       | 85.6%          | 39.2%         | 75.2%          | 24.9%       |
-| 60     | 87.9%          | 35.0%         | 73.6%          | 14.0%       | 86.7%          | 41.2%         | 76.0%          | 27.5%       |
-| 70     | 88.4%          | 30.5%         | 74.5%          | 10.1%       | 85.8%          | 43.6%         | 76.2%          | 28.8%       |
-| 90     | 89.6%          | 29.5%         | 74.4%          | 7.7%        | 85.8%          | 59.4%         | 81.2%          | 56.1%       |
-| 80     | 89.3%          | 30.6%         | 72.7%          | 6.3%        | 86.5%          | 51.9%         | 80.3%          | 39.9%       |
-| 100    | 90.6%          | 29.9%         | 71.9%          | 6.1%        | 84.9%          | 75.1%         | 83.1%          | 79.4%       |
-| 110    | 90.0%          | 29.3%         | 75.0%          | 5.6%        | 84.7%          | 75.2%         | 83.2%          | 84.1%       |
-| 120    | 91.3%          | 33.2%         | 75.6%          | 9.0%        | 85.0%          | 78.7%         | 83.5%          | 88.4%       |
+![Table comparing metrics on the combined train set and test set for empirical risk minimization (ERM) and invariant risk minimization (IRM).](figures/erm-vs-irm-table.png)
 
+ERM outperforms the baseline in all environments, but not by too much in the new test environment. This can be attributed to the learning of spurious correlations. The network was able to effectively distinguish between raccoons and coyotes in the training environments, but the features it relied upon to do so were not general enough to help prediction much in the test environment.
+
+In contrast, IRM loses a single percentage point of accuracy in the train environments, but performs almost as well in the test environment. The feature representation IRM constructs has translated between different environments effectively, and proves an effective discriminator.
+
+As a practical point, we found that IRM worked best when the additional IRM penalty term was not added to the loss until the point at which ERM had reached its best performance - in this case the 40th training epoch. As such, ERM and IRM have identical training routines and performance until this point. When we introduce the IRM penalty, the IRM procedure continues to learn and gain out-of-distribution generalization capability, whereas ERM begins to overfit. By the 120th epoch, IRM has the accuracy reported above, whereas ERM has achieved 91% in the combined training environments, at the cost of reducing its test accuracy by a few percentage points to 33%.
+
+#### Interpretability
+
+IRM yields impressive results, especially considering how hard it is to learn from these images. It has a clear and significant improvement in when compared to ERM in a new environment. In this section we examine a few concrete examples of successes and failures of our prototype model and our speculations as to why they may be.
+
+It would be nice to have a better sense of whether IRM has learnt invariant features. By that we mean, whether it has learnt to spot a raccoon’s long bushy tail, it’s round back or coyote’s slender head instead of the terrain or foliage in the image. Understanding which parts of the image contribute towards IRM’s performance is a powerful proposition. The classification task itself is hard: if you closely look at some of the images in the Wildcam dataset at a first glance it’s even hard for us, humans, to point out where exactly the animal is. An interpretability technique like Local Interpretable Model-agnostic Explanations ([LIME](https://arxiv.org/abs/1602.04938)) provides valuable insights into how that classification is working.
+
+LIME is an explanation technique that can be applied to almost any type of classification model — our  report [FF06: Interpretability](https://ff06-2020.fastforwardlabs.com/) discusses these possibilities — but here we will consider its application to image data. LIME is a way to understand how different parts of an input affect the output of a model. This is accomplished, essentially, by turning the dials of the input and observing the effect on the output.
+
+Let’s first try and understand how LIME works at a high-level, including what inputs we need to provide, and what to expect as output, through a sample image in the test set. The left of the figure below is a sample raw image of a coyote with dimensions height=747 and width=1024, as were all images in the dataset.
+
+![Left: a raw Wildcam image. Right: Having been cropped and scaled to the input dimensions required by ResNet18.](figures/coyote-resized.png)
+
+To use the IRM model, we must first perform some image transformations like resizing, cropping and normalization, using the same transformations that we did when training the model. The input image then appears as shown on the right of the figure above, a normalized, 224 * 224 image. The transformed image when scored by the IRM model outputs a probability of 98% (0.98) for the coyote class! So yes, our model is pretty confident of it’s prediction.
+
+Now, let’s see how LIME works on this image. First, the LIME constructs a local linear model, and makes a prediction for the image. For the example image, the predicted score is 0.95, pretty close to the IRM model.  When trying to explain the prediction, LIME uses interpretable representations. For images, interpretable representations are basically contiguous patches of similar pixels, called superpixels. The superpixels for an image are generated by a standard algorithm, QuickShift, in the LIME implementation. The left panel in the figure below shows all the 34 superpixels generated by LIME for the example image.
+
+![LIME masks random combinations of superpixels, generated by QuickShift, to build a local linear model.](figures/lime-masks.png)
+
+It then creates versions of the original image by randomly masking different combinations of the superpixels as shown in the middle and right panes of the above figure. Each random set of masked superpixels is one perturbation of the image. The modeler chooses the number of perturbations; in our case we used 1000 perturbations of the original image. LIME then builds a regression model on all these perturbed images and determines the superpixels that contributed most towards the prediction based on their weights.
+
+The figure below shows the superpixel explanations (with the rest of the image grayed out) for the top 12 features that contribute towards the prediction of the coyote classification. While there are quite a few features that are mostly spurious covering the foliage or terrain, one of them covers the entire body of the coyote. Looking at these explanations provide an alternative way of assessing the IRM model and can enhance our trust that the model is learning to rely on sensible features.
+
+![The non-grayed-out pixels correspond to the top 12 superpixels that contribute positively to the Coyote classification for the IRM model.](figures/irm-top-12.png)
+
+Now when we generate the top 12 LIME explanations for the same image but based on the ERM model, they seem to capture more of the surroundings rather than any of the coyote’s body parts.
+
+![The non-grayed-out pixels correspond to the top 12 superpixels that contribute positively to the Coyote classification for the ERM model. In this case, they didn't catch much of the coyote.](figures/erm-top-12.png)
+
+And then there are instances where LIME explanations seem to rely on spurious features. For example, in the figure below, the original image is classified as a coyote by the IRM model with a probability of 72% (0.72) whereas the LIME score is close to 0.53. The superpixels contributing towards the classification for both the IRM and ERM models usually cover the terrain or foliage, though some outline the coyote’s body.
+
+![In this instance, both models seem to be relying on environmental features to predict Coyote.](figures/spurious-coyote.png)
+
+We observe that the explanations make more intuitive sense when the LIME score is close to the model score.
+
+IRM can only learn to be invariant with respect to the invariants that the environments encode. If there are spurious correlations that are the same across environments, IRM will not distinguish them from invariant features.
+
+One feature that appears invariant in this dataset is the day or night cycle. Raccoons appear exclusively at night, and IRM could well learn that night means raccoon, and rely on it heavily. This correlation is spurious - a raccoon is still a raccoon in the day! However, we would need more environments, including images of raccoons in the day, to disentangle that.
+
+The representation that IRM extracts from an environment should theoretically be closer to encoding the latent causal structure of the problem than that which ERM extracts. In our scenario, we might expect that IRM learns to focus more on the actual animal in the picture, since the presence of the animal is the cause of a given annotation. The animals change little between environments, whereas environmental features like foliage are completely different at different camera trap locations. Thus, the causal features ought to be invariant between environments.
+
+That said, although for some samples the IRM results appear promising it is hard to confirm that there is an obvious pattern. And this can be attributed to both the model and the interpretability technique. We chose to train only the last layer of ResNet18 to come up with the IRM model. This choice has an inherent drawback: the capacity for feature learning is low. As such, we wouldn’t expect perfect results, since it’s unlikely that the pretrained ResNet representations map perfectly to raccoons and coyotes.^[Imperfect interpretability results notwithstanding, using ResNet as a feature extractor is representative of how CV systems are used in the real world, and the resulting out-of-distribution performance improvements are impressive.]
+
+Further, although an explanation of an image provides some reassurance of the quality of the model, it’s probably still insufficient to provide an overall or a global picture of the _kind_ of features a given model is using, aggregated from all the individual explanations. And even though explanations for multiple images are insightful these have to be judiciously selected. When it comes to text or tabular data there are ways to determine the overall or global feature importance, because the features in tabular data or vocabulary stay consistent across all the data points. The superpixels of an image cannot be consistent across all the images, which makes it really hard to assess whether the overall explanations make sense. Developing tools to understand large image datasets is a worthy endeavour!
