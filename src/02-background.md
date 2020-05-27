@@ -102,9 +102,9 @@ We will do this in the framework of Structural Causal Models (SCMs). An SCM is a
 ::: info
 ##### Causal Terminology
 
-A causal graph is a directed acyclic graph denoting the dependency between variables.
+A **causal graph** is a directed acyclic graph denoting the dependency between variables.
 
-A structural causal model carries more information than a causal graph alone - it also specifies the functional form of dependencies between variables.
+A **structural causal model** carries more information than a causal graph alone - it also specifies the functional form of dependencies between variables.
 
 Remarkably, it’s possible to do much causal reasoning, including calculating the size of causal effects, via the graph alone, without specifying a parametric form for the relationships between causes and effects.
 :::
