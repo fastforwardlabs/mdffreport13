@@ -885,7 +885,7 @@ Interpretability techniques such as LIME provide important insights into models,
 <p>The objects of interest in the dataset are animals, which are basically invariant across environments: a raccoon looks like a raccoon in the mountains and in your backyard (though the particular raccoon may be different). The images are not split evenly between environments, since there is more animal activity in some places than others. Nor are the animal species evenly distributed among cameras. Some cameras will primarily produce images of one species or another, depending on the animals active in the area.</p>
 <p>If we were to naively train a model using empirical risk on a subset of cameras, we could well end up learning exactly those class imbalances. If 99% of the images from camera 1 are labeled as deer, then we could have a 99% accurate classifier by learning to recognize the fallen tree that is present only in camera 1, rather than the deer themselves. Clearly such a classifier has not really learned to recognize deer, and would be useless for predicting in another environment.</p>
 <p>We want to learn to recognize the animals themselves. The IRM setup seems ideally suited to address this challenge.</p>
-<p>To validate the approach, we restricted our experiment to only three cameras and two animal species, which were randomly chosen. Of the three cameras, two were used as training environments, and one as a held-out environment for testing. The task was binary classification: distinguish coyotes from raccoons. We used Resnet18, a pretrained classifier trained on the much larger ImageNet dataset as a feature extractor with a final fully connected layer with sigmoid output, which we tuned to the problem at hand.</p>
+<p>To validate the approach, we restricted our experiment to only three cameras and two animal species, which were randomly chosen. Of the three cameras, two were used as training environments, and one as a held-out environment for testing. The task was binary classification: distinguish coyotes from raccoons. We used <a href="https://arxiv.org/abs/1512.03385">ResNet18</a>, a pretrained classifier trained on the much larger ImageNet dataset as a feature extractor with a final fully connected layer with sigmoid output, which we tuned to the problem at hand.</p>
 <p>Each of the environments contained images of both coyotes and racoons. Even this reduced dataset exhibits several challenges typical to real world computer vision: some images are dark, some are blurred, some are labelled as containing an animal when only the foot of the animal is visible, and some feature nothing but a patch of fur covering the lens. We saw some success simply ignoring these problems, but ultimately manually selected only those images clearly showing an identifiable coyote or raccoon.</p>
 <h3 id="results">Results</h3>
 <p>When tackling any supervised learning problem, it’s a good idea to set up a simple baseline against which to compare performance. In the case of a binary classifier, an appropriate baseline model is to always predict the majority class of the training set. The three environments had a class balance as shown in the table below. The majority class in both train environments is coyote, so our baseline accuracy is the accuracy if we always predict the animal is a coyote, regardless of environment or input image.</p>
@@ -919,192 +919,47 @@ Interpretability techniques such as LIME provide important insights into models,
 </tr>
 </tbody>
 </table></div>
-<p>When we treat the problem with empirical risk minimization - minimizing the cross entropy between classes - we found good performance in the train environments, but very poor performance in the test environment. We report the metrics over 120 epochs of training in the table below.</p>
-<div style="width: 100%; overflow-x: auto;"><table>
-<thead>
-<tr>
-<th style="text-align:center"></th>
-<th style="text-align:center">ERM</th>
-<th style="text-align:center"></th>
-<th style="text-align:center"></th>
-<th style="text-align:center"></th>
-<th style="text-align:center">IRM</th>
-<th style="text-align:center"></th>
-<th style="text-align:center"></th>
-<th style="text-align:center"></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center">epoch</td>
-<td style="text-align:center">train accuracy</td>
-<td style="text-align:center">test accuracy</td>
-<td style="text-align:center">test precision</td>
-<td style="text-align:center">test recall</td>
-<td style="text-align:center">train accuracy</td>
-<td style="text-align:center">test accuracy</td>
-<td style="text-align:center">test precision</td>
-<td style="text-align:center">test recall</td>
-</tr>
-<tr>
-<td style="text-align:center">0</td>
-<td style="text-align:center">30.8%</td>
-<td style="text-align:center">27.0%</td>
-<td style="text-align:center">57.7%</td>
-<td style="text-align:center">4.0%</td>
-<td style="text-align:center">30.8%</td>
-<td style="text-align:center">26.9%</td>
-<td style="text-align:center">56.0%</td>
-<td style="text-align:center">3.7%</td>
-</tr>
-<tr>
-<td style="text-align:center">10</td>
-<td style="text-align:center">68.2%</td>
-<td style="text-align:center">28.1%</td>
-<td style="text-align:center">0.0%</td>
-<td style="text-align:center">0.0%</td>
-<td style="text-align:center">68.2%</td>
-<td style="text-align:center">28.0%</td>
-<td style="text-align:center">0.0%</td>
-<td style="text-align:center">0.0%</td>
-</tr>
-<tr>
-<td style="text-align:center">20</td>
-<td style="text-align:center">84.0%</td>
-<td style="text-align:center">35.5%</td>
-<td style="text-align:center">73.4%</td>
-<td style="text-align:center">18.3%</td>
-<td style="text-align:center">79.6%</td>
-<td style="text-align:center">26.4%</td>
-<td style="text-align:center">64.3%</td>
-<td style="text-align:center">2.4%</td>
-</tr>
-<tr>
-<td style="text-align:center">30</td>
-<td style="text-align:center">84.5%</td>
-<td style="text-align:center">31.5%</td>
-<td style="text-align:center">65.9%</td>
-<td style="text-align:center">7.1%</td>
-<td style="text-align:center">81.3%</td>
-<td style="text-align:center">29.7%</td>
-<td style="text-align:center">60.0%</td>
-<td style="text-align:center">1.6%</td>
-</tr>
-<tr>
-<td style="text-align:center">40</td>
-<td style="text-align:center">86.2%</td>
-<td style="text-align:center">36.1%</td>
-<td style="text-align:center">74.0%</td>
-<td style="text-align:center">19.6%</td>
-<td style="text-align:center">85.5%</td>
-<td style="text-align:center">34.0%</td>
-<td style="text-align:center">72.4%</td>
-<td style="text-align:center">16.7%</td>
-</tr>
-<tr>
-<td style="text-align:center">50</td>
-<td style="text-align:center">86.3%</td>
-<td style="text-align:center">31.7%</td>
-<td style="text-align:center">73.6%</td>
-<td style="text-align:center">10.3%</td>
-<td style="text-align:center">85.6%</td>
-<td style="text-align:center">39.2%</td>
-<td style="text-align:center">75.2%</td>
-<td style="text-align:center">24.9%</td>
-</tr>
-<tr>
-<td style="text-align:center">60</td>
-<td style="text-align:center">87.9%</td>
-<td style="text-align:center">35.0%</td>
-<td style="text-align:center">73.6%</td>
-<td style="text-align:center">14.0%</td>
-<td style="text-align:center">86.7%</td>
-<td style="text-align:center">41.2%</td>
-<td style="text-align:center">76.0%</td>
-<td style="text-align:center">27.5%</td>
-</tr>
-<tr>
-<td style="text-align:center">70</td>
-<td style="text-align:center">88.4%</td>
-<td style="text-align:center">30.5%</td>
-<td style="text-align:center">74.5%</td>
-<td style="text-align:center">10.1%</td>
-<td style="text-align:center">85.8%</td>
-<td style="text-align:center">43.6%</td>
-<td style="text-align:center">76.2%</td>
-<td style="text-align:center">28.8%</td>
-</tr>
-<tr>
-<td style="text-align:center">90</td>
-<td style="text-align:center">89.6%</td>
-<td style="text-align:center">29.5%</td>
-<td style="text-align:center">74.4%</td>
-<td style="text-align:center">7.7%</td>
-<td style="text-align:center">85.8%</td>
-<td style="text-align:center">59.4%</td>
-<td style="text-align:center">81.2%</td>
-<td style="text-align:center">56.1%</td>
-</tr>
-<tr>
-<td style="text-align:center">80</td>
-<td style="text-align:center">89.3%</td>
-<td style="text-align:center">30.6%</td>
-<td style="text-align:center">72.7%</td>
-<td style="text-align:center">6.3%</td>
-<td style="text-align:center">86.5%</td>
-<td style="text-align:center">51.9%</td>
-<td style="text-align:center">80.3%</td>
-<td style="text-align:center">39.9%</td>
-</tr>
-<tr>
-<td style="text-align:center">100</td>
-<td style="text-align:center">90.6%</td>
-<td style="text-align:center">29.9%</td>
-<td style="text-align:center">71.9%</td>
-<td style="text-align:center">6.1%</td>
-<td style="text-align:center">84.9%</td>
-<td style="text-align:center">75.1%</td>
-<td style="text-align:center">83.1%</td>
-<td style="text-align:center">79.4%</td>
-</tr>
-<tr>
-<td style="text-align:center">110</td>
-<td style="text-align:center">90.0%</td>
-<td style="text-align:center">29.3%</td>
-<td style="text-align:center">75.0%</td>
-<td style="text-align:center">5.6%</td>
-<td style="text-align:center">84.7%</td>
-<td style="text-align:center">75.2%</td>
-<td style="text-align:center">83.2%</td>
-<td style="text-align:center">84.1%</td>
-</tr>
-<tr>
-<td style="text-align:center">120</td>
-<td style="text-align:center">91.3%</td>
-<td style="text-align:center">33.2%</td>
-<td style="text-align:center">75.6%</td>
-<td style="text-align:center">9.0%</td>
-<td style="text-align:center">85.0%</td>
-<td style="text-align:center">78.7%</td>
-<td style="text-align:center">83.5%</td>
-<td style="text-align:center">88.4%</td>
-</tr>
-</tbody>
-</table></div>
+<p>When we treat the problem with empirical risk minimization - minimizing the cross entropy between classes - we found good performance in the train environments, but very poor performance in the test environment. We report the metrics over 120 epochs of training in the table below. The best test accuracy is achieved at epoch 40, after which ERM begins to overfit. In the case of IRM, we pay a small price in train set accuracy, but get much better test results. Again, reporting the highest test accuracy achieved in 120 epochs (at epoch 120).</p>
+<figure><img src="figures/erm-vs-irm-table.png" alt="Table comparing metrics on the combined train set and test set for empirical risk minimization (ERM) and invariant risk minimization (IRM)."><figcaption>Table comparing metrics on the combined train set and test set for empirical risk minimization (ERM) and invariant risk minimization (IRM).</figcaption></figure>
+<p>ERM outperforms the baseline in all environments, but not by too much in the new test environment. This can be attributed to the learning of spurious correlations. The network was able to effectively distinguish between raccoons and coyotes in the training environments, but the features it relied upon to do so were not general enough to help prediction much in the test environment.</p>
+<p>In contrast, IRM loses a single percentage point of accuracy in the train environments, but performs almost as well in the test environment. The feature representation IRM constructs has translated between different environments effectively, and proves an effective discriminator.</p>
+<p>As a practical point, we found that IRM worked best when the additional IRM penalty term was not added to the loss until the point at which ERM had reached its best performance - in this case the 40th training epoch. As such, ERM and IRM have identical training routines and performance until this point. When we introduce the IRM penalty, the IRM procedure continues to learn and gain out-of-distribution generalization capability, whereas ERM begins to overfit. By the 120th epoch, IRM has the accuracy reported above, whereas ERM has achieved 91% in the combined training environments, at the cost of reducing its test accuracy by a few percentage points to 33%.</p>
+<h4 id="interpretability">Interpretability</h4>
+<p>IRM yields impressive results, especially considering how hard it is to learn from these images. It has a clear and significant improvement in when compared to ERM in a new environment. In this section we examine a few concrete examples of successes and failures of our prototype model and our speculations as to why they may be.</p>
+<p>It would be nice to have a better sense of whether IRM has learnt invariant features. By that we mean, whether it has learnt to spot a raccoon’s long bushy tail, it’s round back or coyote’s slender head instead of the terrain or foliage in the image. Understanding which parts of the image contribute towards IRM’s performance is a powerful proposition. The classification task itself is hard: if you closely look at some of the images in the Wildcam dataset at a first glance it’s even hard for us, humans, to point out where exactly the animal is. An interpretability technique like Local Interpretable Model-agnostic Explanations (<a href="https://arxiv.org/abs/1602.04938">LIME</a>) provides valuable insights into how that classification is working.</p>
+<p>LIME is an explanation technique that can be applied to almost any type of classification model — our  report <a href="https://ff06-2020.fastforwardlabs.com/">FF06: Interpretability</a> discusses these possibilities — but here we will consider its application to image data. LIME is a way to understand how different parts of an input affect the output of a model. This is accomplished, essentially, by turning the dials of the input and observing the effect on the output.</p>
+<p>Let’s first try and understand how LIME works at a high-level, including what inputs we need to provide, and what to expect as output, through a sample image in the test set. The left of the figure below is a sample raw image of a coyote with dimensions height=747 and width=1024, as were all images in the dataset.</p>
+<figure><img src="figures/coyote-resized.png" alt="Left: a raw Wildcam image. Right: Having been cropped and scaled to the input dimensions required by ResNet18."><figcaption>Left: a raw Wildcam image. Right: Having been cropped and scaled to the input dimensions required by ResNet18.</figcaption></figure>
+<p>To use the IRM model, we must first perform some image transformations like resizing, cropping and normalization, using the same transformations that we did when training the model. The input image then appears as shown on the right of the figure above, a normalized, 224 * 224 image. The transformed image when scored by the IRM model outputs a probability of 98% (0.98) for the coyote class! So yes, our model is pretty confident of it’s prediction.</p>
+<p>Now, let’s see how LIME works on this image. First, the LIME constructs a local linear model, and makes a prediction for the image. For the example image, the predicted score is 0.95, pretty close to the IRM model.  When trying to explain the prediction, LIME uses interpretable representations. For images, interpretable representations are basically contiguous patches of similar pixels, called superpixels. The superpixels for an image are generated by a standard algorithm, QuickShift, in the LIME implementation. The left panel in the figure below shows all the 34 superpixels generated by LIME for the example image.</p>
+<figure><img src="figures/lime-masks.png" alt="LIME masks random combinations of superpixels, generated by QuickShift, to build a local linear model."><figcaption>LIME masks random combinations of superpixels, generated by QuickShift, to build a local linear model.</figcaption></figure>
+<p>It then creates versions of the original image by randomly masking different combinations of the superpixels as shown in the middle and right panes of the above figure. Each random set of masked superpixels is one perturbation of the image. The modeler chooses the number of perturbations; in our case we used 1000 perturbations of the original image. LIME then builds a regression model on all these perturbed images and determines the superpixels that contributed most towards the prediction based on their weights.</p>
+<p>The figure below shows the superpixel explanations (with the rest of the image grayed out) for the top 12 features that contribute towards the prediction of the coyote classification. While there are quite a few features that are mostly spurious covering the foliage or terrain, one of them covers the entire body of the coyote. Looking at these explanations provide an alternative way of assessing the IRM model and can enhance our trust that the model is learning to rely on sensible features.</p>
+<figure><img src="figures/irm-top-12.png" alt="The non-grayed-out pixels correspond to the top 12 superpixels that contribute positively to the Coyote classification for the IRM model."><figcaption>The non-grayed-out pixels correspond to the top 12 superpixels that contribute positively to the Coyote classification for the IRM model.</figcaption></figure>
+<p>Now when we generate the top 12 LIME explanations for the same image but based on the ERM model, they seem to capture more of the surroundings rather than any of the coyote’s body parts.</p>
+<figure><img src="figures/erm-top-12.png" alt="The non-grayed-out pixels correspond to the top 12 superpixels that contribute positively to the Coyote classification for the ERM model. In this case, they didn’t catch much of the coyote."><figcaption>The non-grayed-out pixels correspond to the top 12 superpixels that contribute positively to the Coyote classification for the ERM model. In this case, they didn’t catch much of the coyote.</figcaption></figure>
+<p>And then there are instances where LIME explanations seem to rely on spurious features. For example, in the figure below, the original image is classified as a coyote by the IRM model with a probability of 72% (0.72) whereas the LIME score is close to 0.53. The superpixels contributing towards the classification for both the IRM and ERM models usually cover the terrain or foliage, though some outline the coyote’s body.</p>
+<figure><img src="figures/spurious-coyote.png" alt="In this instance, both models seem to be relying on environmental features to predict Coyote."><figcaption>In this instance, both models seem to be relying on environmental features to predict Coyote.</figcaption></figure>
+<p>We observe that the explanations make more intuitive sense when the LIME score is close to the model score.</p>
+<p>IRM can only learn to be invariant with respect to the invariants that the environments encode. If there are spurious correlations that are the same across environments, IRM will not distinguish them from invariant features.</p>
+<p>One feature that appears invariant in this dataset is the day or night cycle. Raccoons appear exclusively at night, and IRM could well learn that night means raccoon, and rely on it heavily. This correlation is spurious - a raccoon is still a raccoon in the day! However, we would need more environments, including images of raccoons in the day, to disentangle that.</p>
+<p>The representation that IRM extracts from an environment should theoretically be closer to encoding the latent causal structure of the problem than that which ERM extracts. In our scenario, we might expect that IRM learns to focus more on the actual animal in the picture, since the presence of the animal is the cause of a given annotation. The animals change little between environments, whereas environmental features like foliage are completely different at different camera trap locations. Thus, the causal features ought to be invariant between environments.</p>
+<p>That said, although for some samples the IRM results appear promising it is hard to confirm that there is an obvious pattern. And this can be attributed to both the model and the interpretability technique. We chose to train only the last layer of ResNet18 to come up with the IRM model. This choice has an inherent drawback: the capacity for feature learning is low. As such, we wouldn’t expect perfect results, since it’s unlikely that the pretrained ResNet representations map perfectly to raccoons and coyotes.<sup class="footnote-ref"><a href="#fn19" id="fnref19">[19]</a></sup></p>
+<p>Further, although an explanation of an image provides some reassurance of the quality of the model, it’s probably still insufficient to provide an overall or a global picture of the <em>kind</em> of features a given model is using, aggregated from all the individual explanations. And even though explanations for multiple images are insightful these have to be judiciously selected. When it comes to text or tabular data there are ways to determine the overall or global feature importance, because the features in tabular data or vocabulary stay consistent across all the data points. The superpixels of an image cannot be consistent across all the images, which makes it really hard to assess whether the overall explanations make sense. Developing tools to understand large image datasets is a worthy endeavour!</p>
 <h2 id="landscape">Landscape</h2>
 <p>Causality spans a broad area of topics, including using causal insights to improve machine learning methods, adapting it for high-dimensional datasets and applying them for better data-driven decision making in real-world contexts. We also discussed in Chapter 3 how the collected data is rarely an accurate reflection of the population, and hence may fail to generalize in different environments or new datasets. Methods based on invariance show promise in addressing out-of-distribution generalization.</p>
 <h3 id="use-cases">Use Cases</h3>
 <p>As we demonstrated in the <a href="#prototype">Prototype</a> Chapter, Invariant Risk Minimization is particularly well suited to image problems in diverse physical environments. However, an environment need not mean only the scenery in an image, and when it does, it need not be fixed to a single value. Here we suggest some applications in and beyond computer vision.</p>
 <h4 id="healthcare">Healthcare</h4>
-<p>In clinical imaging settings, radiologists manually annotate tissues, abnormalities, and pathologies of In healthcare, medical images have to be manually annotated by radiologists to identify abnormalities. These annotated images are then used to train and build diagnostic models. Oftentimes the devices like MRI scanners that generate these medical images exhibit some kind of variation.<sup class="footnote-ref"><a href="#fn19" id="fnref19">[19]</a></sup> That is, the images that are generated by one MRI scanner could be systematically different from another for the same patient, due to mechanical configurations, vendor differences or any number of other reasons. As such a diagnostic model that was built on the images generated by an old MRI scanner may perform poorly when tested on the images generated by a new scanner. One way to solve this problem is to have the radiologist annotate the images generated by the new scanner and then re-train the model. But that could be expensive and time consuming. Plus, this isn’t a permanent solution, everytime there’s a new scanner or changes to the configuration one will have to go back to making the existing model work with a new set of images.</p>
+<p>In clinical imaging settings, radiologists manually annotate tissues, abnormalities, and pathologies of In healthcare, medical images have to be manually annotated by radiologists to identify abnormalities. These annotated images are then used to train and build diagnostic models. Oftentimes the devices like MRI scanners that generate these medical images exhibit some kind of variation.<sup class="footnote-ref"><a href="#fn20" id="fnref20">[20]</a></sup> That is, the images that are generated by one MRI scanner could be systematically different from another for the same patient, due to mechanical configurations, vendor differences or any number of other reasons. As such a diagnostic model that was built on the images generated by an old MRI scanner may perform poorly when tested on the images generated by a new scanner. One way to solve this problem is to have the radiologist annotate the images generated by the new scanner and then re-train the model. But that could be expensive and time consuming. Plus, this isn’t a permanent solution, everytime there’s a new scanner or changes to the configuration one will have to go back to making the existing model work with a new set of images.</p>
 <p>A diagnostic model based on invariant prediction that treats scanners as environments could be immune to these noisy device variations and change its decisions accordingly. This could save the time and money needed to annotate images from the new scanner.</p>
 <h4 id="robotics">Robotics</h4>
 <figure><img src="figures/ff13-26.png" alt="Autonomous systems trained in the lab or in limited environments will struggle to adapt to the diversity present in the real world."><figcaption>Autonomous systems trained in the lab or in limited environments will struggle to adapt to the diversity present in the real world.</figcaption></figure>
-<p>Autonomous systems need to detect and adapt to different environments. These systems rely on sophisticated sensors, cameras and large amounts of labeled and diverse real-world datasets which are difficult to acquire. Take for example, the task of autonomously following a man-made trail that is traversed by hikers or mountain bikers. This is a mostly unsolved task for robotics but yet an important one for applications like search and rescue.<sup class="footnote-ref"><a href="#fn20" id="fnref20">[20]</a></sup></p>
+<p>Autonomous systems need to detect and adapt to different environments. These systems rely on sophisticated sensors, cameras and large amounts of labeled and diverse real-world datasets which are difficult to acquire. Take for example, the task of autonomously following a man-made trail that is traversed by hikers or mountain bikers. This is a mostly unsolved task for robotics but yet an important one for applications like search and rescue.<sup class="footnote-ref"><a href="#fn21" id="fnref21">[21]</a></sup></p>
 <p>While many robot types, such as the quadrupedal robot, can be efficient at locomotion, successfully navigating real-world forest trails is hard. Apart from the mechanics of the problem, perceiving real-world trails is difficult. The appearance of the wilderness area may vary a lot depending on the location, unpaved roads generally have less structure and blend with the surrounding grass areas, vegetation and such, and trails change over time. It would be impossible to have a comprehensive dataset of all trails, in all weather and lighting conditions.</p>
 <p>In such cases, a possible solution is to cast the trail perception problem as an image classification task and adopt an invariance based approach that operates directly on the image’s raw pixel values. Successful application could allow for out-of-distribution generalization to new trails, since the features learned are more transferable than environment-specific signals. Naturally, similar ideas are relevant for autonomous vehicles in urban areas.</p>
 <h4 id="activity-recognition-systems">Activity recognition systems</h4>
-<p>Smart devices (phones, watches, fitness trackers) carry a large array of sensors: accelerometers, gyroscopes, magnetometers, barometers, ambient lights sensors and many more. Categorizing this data by the activity being performed at the time of recording - such as sitting, standing or swimming - has allowed for the development of machine learning based human-activity recognition systems. Correctly predicting a wearer’s activity enables a host of contextual applications, in particular in (but not restricted to) the health and wellness space.<sup class="footnote-ref"><a href="#fn21" id="fnref21">[21]</a></sup></p>
+<p>Smart devices (phones, watches, fitness trackers) carry a large array of sensors: accelerometers, gyroscopes, magnetometers, barometers, ambient lights sensors and many more. Categorizing this data by the activity being performed at the time of recording - such as sitting, standing or swimming - has allowed for the development of machine learning based human-activity recognition systems. Correctly predicting a wearer’s activity enables a host of contextual applications, in particular in (but not restricted to) the health and wellness space.<sup class="footnote-ref"><a href="#fn22" id="fnref22">[22]</a></sup></p>
 <p>Unfortunately, it is hard to satisfactorily model this data due to the diversity exhibited in the real world. A single individual can perform a given activity slightly differently day-to-day, the device may be unusually placed, or held or worn in a variety of orientations. Of course, different users are physically diverse, and devices have intrinsic differences in their sensors and systems. This also means that we either need a labelled dataset that captures the activity for each user and device (which is prohibitively expensive) or another way of identifying attributes that generalize better. Methods based on invariance could be particularly useful and well suited in this scenario, capturing the essence of “sitting”, rather than the particular sensor activations for a particular user sitting on a particular chair.</p>
 <h4 id="natural-language-processing">Natural language processing</h4>
 <figure><img src="figures/ff13-25.png" alt="Environments are everywhere. For instance, different sources of natural language."><figcaption>Environments are everywhere. For instance, different sources of natural language.</figcaption></figure>
@@ -1114,10 +969,10 @@ Interpretability techniques such as LIME provide important insights into models,
 <figure><img src="figures/ff13-24.png" alt="The data a recommender system collects is inherently biased by the suggestions it makes. We can untangle this bias with causal inference."><figcaption>The data a recommender system collects is inherently biased by the suggestions it makes. We can untangle this bias with causal inference.</figcaption></figure>
 <p>Recommendation systems are algorithms designed to present relevant items to the users on the web, for example, suggesting which movie to watch, a book to read or a product to buy. As such, making good recommendations is an important problem. The problem is one of making a relevant recommendation for a user based on a record of their historical activities, from which we must infer their preferences.</p>
 <p>The training data is either explicit (e.g. a rating a user left on a book) or implicit (e.g. linger time on a webpage, or click data). There is a well known exposure problem in recommender systems. A user simply cannot click on an item they have not been presented with. Modeling the data without accounting for this is akin to the assumption of independent and identically distributed data, and is false: users do not select items randomly and independently of one another. For instance, a user may choose between two competing movies to watch, rather than selecting whether to watch each independently.</p>
-<p>ReySys are a classic application for causality, which allows us to correct for this exposure bias by treating the selection of items to present to a user as an intervention. Applying causal approaches to recommendation naturally improves generalization to new data,<sup class="footnote-ref"><a href="#fn22" id="fnref22">[22]</a></sup> and it seems likely that methods using invariant prediction could enhance this.</p>
+<p>ReySys are a classic application for causality, which allows us to correct for this exposure bias by treating the selection of items to present to a user as an intervention. Applying causal approaches to recommendation naturally improves generalization to new data,<sup class="footnote-ref"><a href="#fn23" id="fnref23">[23]</a></sup> and it seems likely that methods using invariant prediction could enhance this.</p>
 <h3 id="tools">Tools</h3>
 <p>The invariance-based approaches to causality we have discussed do not require dedicated tooling - ICP and IRM are procedures that could be implemented with general purpose machine learning frameworks.</p>
-<p>Nonetheless, the authors of the ICP papers <sup class="footnote-ref"><a href="#fn23" id="fnref23">[23]</a></sup> provide corresponding R packages: <a href="https://cran.r-project.org/web/packages/InvariantCausalPrediction/index.html">InvariantCausalPrediction</a> and <a href="https://cran.r-project.org/web/packages/nonlinearICP/index.html">nonlinearICP</a>. The packages make the techniques easy to use, and include additional utilities, such as dedicated plots for confidence intervals on causal coefficients. We are not aware of a package for IRM, but the authors have provided a <a href="http://github.com/facebookresearch/InvariantRiskMinimization/">code repository</a> which reproduces the paper results.</p>
+<p>Nonetheless, the authors of the ICP papers <sup class="footnote-ref"><a href="#fn24" id="fnref24">[24]</a></sup> provide corresponding R packages: <a href="https://cran.r-project.org/web/packages/InvariantCausalPrediction/index.html">InvariantCausalPrediction</a> and <a href="https://cran.r-project.org/web/packages/nonlinearICP/index.html">nonlinearICP</a>. The packages make the techniques easy to use, and include additional utilities, such as dedicated plots for confidence intervals on causal coefficients. We are not aware of a package for IRM, but the authors have provided a <a href="http://github.com/facebookresearch/InvariantRiskMinimization/">code repository</a> which reproduces the paper results.</p>
 <p>Below, we list a handful of open source projects that aid in traditional, SCM-based causal inference.</p>
 <h4 id="dowhy">DoWhy</h4>
 <p>Microsoft Research is developing the <a href="https://microsoft.github.io/dowhy/">DoWhy</a> python library for causal inference, incorporating elements of both causal graphical models and potential outcomes. The library is oriented around pandas DataFrames, and as such fits easily into a Python data analysis workflow. In particular DoWhy makes a separation between four stages of causal inference:</p>
@@ -1164,26 +1019,26 @@ Interpretability techniques such as LIME provide important insights into models,
 <p>So, at this point we probably agree that methods based on invariance are promising. How else might we approach out-of-distribution generalization? In general, there are two families of approaches; those that learn to match the feature distributions (or estimate a data representation) and those that employ some kind of optimization technique.</p>
 <h4 id="domain-adaptation">Domain adaptation</h4>
 <p>Domain adaptation is a special case of transfer learning. In domain adaptation, the model learns a task in a source domain, which has some feature distribution, and we would like it to be able to perform the same task well in a target domain, where the feature distribution is different. Domains play the same role as environments in invariance-based approaches - a source domain is an environment that was trained in, and a target domain is any environment that was not trained in.</p>
-<p>Domain adaptation also enforces a kind of invariance - it seeks a representation that is distributed the same across source and target domain (so, across environments).<sup class="footnote-ref"><a href="#fn24" id="fnref24">[24]</a></sup> However, truly invariant, causal features need not follow the same distribution in different environments. A snowy cow will not generate quite the same pixel distribution as a sandy cow, and the causal feature we wish to represent is the cow itself.</p>
+<p>Domain adaptation also enforces a kind of invariance - it seeks a representation that is distributed the same across source and target domain (so, across environments).<sup class="footnote-ref"><a href="#fn25" id="fnref25">[25]</a></sup> However, truly invariant, causal features need not follow the same distribution in different environments. A snowy cow will not generate quite the same pixel distribution as a sandy cow, and the causal feature we wish to represent is the cow itself.</p>
 <h4 id="robust-learning">Robust learning</h4>
 <p>The idea of learning across multiple environments is not novel to invariance based approaches. <a href="https://www.aaai.org/Library/AAAI/2005/aaai05-112.php">Robust Supervised Learning</a> is a family of techniques that uses the same multi-environment setup as IRM (but much predate it), with a similar goal of enabling or enhancing out-of-distribution generalization. Said differently, the goal is a predictor that is robust to distributional shifts of the inputs.</p>
 <p>The difference from the IRM setup we have covered is the loss function. The key idea is to add environment-specific “baseline” terms to the loss, and try to fix these terms such that particularly noisy environments where the loss may be high do not dominate. Then minimizing the loss should guarantee good performance across all the known environments. Further, a robust predictor will perform well in new environments that are interpolations of those seen in training. This certainly improves out-of-distribution generalization, but does not allow <em>extrapolation</em> outside of what was seen in training, whereas IRM can extrapolate, thanks to relying on an invariant predictor.</p>
 <h4 id="meta-learning">Meta-learning</h4>
 <p>Approaches like domain adaptation, robust learning, and in general transfer learning try to alleviate the problem of out-of-distribution generalization to some extent. Unfortunately, learning invariant features with varying distributions across environments is still challenging. These approaches are good at interpolation, but not extrapolation.</p>
-<p>This is where meta-learning approaches like Model Agnostic Meta Learning (MAML)<sup class="footnote-ref"><a href="#fn25" id="fnref25">[25]</a></sup> come into play. The underlying idea for meta-learners generally is to attempt to learn tasks with a small number of labeled examples. Training meta-learners is a two-step process involving a <em>learner</em> and a <em>trainer</em>. The goal of the learner (model) is to quickly learn new tasks from a small amount of new data; hence, it is sometimes called a <em>fast learner</em>. (A task here refers to any supervised machine learning problem - e.g., predicting a class given a small number of examples.) This learner is trained, by the meta-learner, to be able to learn from a large number of different tasks. The meta-learner accomplishes this by repeatedly showing the learner hundreds and thousands of different tasks.</p>
+<p>This is where meta-learning approaches like Model Agnostic Meta Learning (MAML)<sup class="footnote-ref"><a href="#fn26" id="fnref26">[26]</a></sup> come into play. The underlying idea for meta-learners generally is to attempt to learn tasks with a small number of labeled examples. Training meta-learners is a two-step process involving a <em>learner</em> and a <em>trainer</em>. The goal of the learner (model) is to quickly learn new tasks from a small amount of new data; hence, it is sometimes called a <em>fast learner</em>. (A task here refers to any supervised machine learning problem - e.g., predicting a class given a small number of examples.) This learner is trained, by the meta-learner, to be able to learn from a large number of different tasks. The meta-learner accomplishes this by repeatedly showing the learner hundreds and thousands of different tasks.</p>
 <p>Learning then, happens at two levels. The first level focuses on quick acquisition of knowledge within each task with a few examples. The second level slowly pulls and digests information across all tasks. In case of MAML (which is optimization based), the learner (or the first level) can achieve an optimal fast learning on a new task with only a small number of gradient steps because the meta-learner provides a good initialization of a model’s parameters. This approach is close to the problem of learning an optimal classifier in multiple environments, and could be explored further to learn invariant features within the data.</p>
 <p>Some recent works have made the connection between causality and meta-learning explicitly, see <a href="https://arxiv.org/abs/1901.10912">A Meta-Transfer Objective for Learning to Disentangle Causal Mechanisms</a>.</p>
 <h3 id="looking-ahead">Looking ahead</h3>
 <p>In this section, we discuss future possibilities with causality in general as well as with methods based on invariance.</p>
 <h4 id="causal-reinforcement-learning">Causal Reinforcement Learning</h4>
-<p>Reinforcement learning is the study of how an agent can learn to choose actions that maximize its future rewards in an interactive and uncertain environment. These agents rely on plenty of simulations (and sometimes real data) to learn which actions lead to high reward in a particular context. Causality is also about calculating the effect of actions, and allows us to transfer knowledge to new, unfamiliar situations. These two disciplines have evolved independently with little interaction between them until recently. Integrating them is likely to be a fruitful area of research, and may extend the reach of both causality and reinforcement learning (RL).<sup class="footnote-ref"><a href="#fn26" id="fnref26">[26]</a></sup></p>
+<p>Reinforcement learning is the study of how an agent can learn to choose actions that maximize its future rewards in an interactive and uncertain environment. These agents rely on plenty of simulations (and sometimes real data) to learn which actions lead to high reward in a particular context. Causality is also about calculating the effect of actions, and allows us to transfer knowledge to new, unfamiliar situations. These two disciplines have evolved independently with little interaction between them until recently. Integrating them is likely to be a fruitful area of research, and may extend the reach of both causality and reinforcement learning (RL).<sup class="footnote-ref"><a href="#fn27" id="fnref27">[27]</a></sup></p>
 <p>There is a natural mapping between the concept of intervention in causal inference and actions taken in RL. Throughout an episode of reinforcement learning (an episode is formed of one run of the system, for example, a complete game of chess, or go), an agent takes actions. This defines a data generating process for the reward that the agent ultimately cares about; different sequences of actions will generate different rewards. Since the agent can choose its actions, each of them is an intervention in this data generating process. In making this connection, we can leverage the mathematics of causal inference. For instance, we could use counterfactuals, the third level of the <a href="#the-ladder-of-causation">The ladder of causation</a>, to reason about actions not taken. Applying such causal techniques may reduce the state space the agent needs to consider, or help account for confounders.</p>
 <p>Methods based on invariance, like IRM, in principle, learn to discover unknown invariances from multiple environments. We could leverage this attribute in reinforcement learning. An episode of RL consists of all the states that fall in between an initial state and a terminal state. Since each episode is independent of another, in IRM terminology they could be viewed as different environments.  An agent could then learn robust policies from each of these episodes that leverage the invariant part of behaviour or actions that lead to reward.</p>
-<p>While reinforcement learning itself is still in nascent stages when it comes to commercial applications, combining it with causality offers a great potential.<sup class="footnote-ref"><a href="#fn27" id="fnref27">[27]</a></sup> But prior to that, we need to address some questions. For example, how do we combine programming abstractions in causal modeling with reinforcement learning that can help find best decisions? What tools and libraries are necessary to enable commercial applications in this space?</p>
+<p>While reinforcement learning itself is still in nascent stages when it comes to commercial applications, combining it with causality offers a great potential.<sup class="footnote-ref"><a href="#fn28" id="fnref28">[28]</a></sup> But prior to that, we need to address some questions. For example, how do we combine programming abstractions in causal modeling with reinforcement learning that can help find best decisions? What tools and libraries are necessary to enable commercial applications in this space?</p>
 <h4 id="irm-and-environments">IRM and environments</h4>
 <p>IRM uses the idea of training in multiple environments to achieve out-of-distribution generalization. Unfortunately, few datasets come with existing environment annotations. There are at least two ways we can try to address this problem.</p>
 <p>The first is to be mindful of the environment when collecting data, and collect metadata alongside. This may be easy (for example, collecting the geo-location of photos in settings where this is possible and does not violate a user’s privacy), or extremely hard, and require much post-collection manual labelling.</p>
-<p>Another compelling but untested option is to try combining IRM with some sort of clustering to segment a single dataset into environments.<sup class="footnote-ref"><a href="#fn28" id="fnref28">[28]</a></sup> The question would be how to cluster in such a way that meaningful and diverse environments are defined. Since existing clustering approaches are purely correlative, and as such vulnerable to spurious correlations, this could prove challenging.</p>
+<p>Another compelling but untested option is to try combining IRM with some sort of clustering to segment a single dataset into environments.<sup class="footnote-ref"><a href="#fn29" id="fnref29">[29]</a></sup> The question would be how to cluster in such a way that meaningful and diverse environments are defined. Since existing clustering approaches are purely correlative, and as such vulnerable to spurious correlations, this could prove challenging.</p>
 <p>Studying the impact of environment selection, and how to create or curate datasets with multiple environments would be a valuable contribution to making invariance-based methods more widely applicable. The authors of <a href="https://deepai.org/publication/an-empirical-study-of-invariant-risk-minimization">An Empirical Study of Invariant Risk Minimization</a> reach the same conclusion.</p>
 <h4 id="causal-reasoning-for-algorithmic-fairness">Causal reasoning for algorithmic fairness</h4>
 <p>In the <a href="#ethics">Ethics</a> chapter we reviewed some notions of fairness in prediction problems and shared how tools of causal reasoning can be leveraged to address fairness. They depart in the traditional way of wholly relying on data-driven approaches and emphasize the need to require additional knowledge of the structure of the world, in the form of a causal model. This additional knowledge is particularly valuable as it informs us how changes in variables propagate in a system, be it natural, engineered or social. Explicit causal assumptions remove ambiguity from methods that just depend upon statistical correlations. Avoiding discrimination through causal reasoning is an active area of research. As efforts to aid more transparency and fairness in machine learning systems grow, causal reasoning will continue to gain significant momentum in guiding algorithms towards fairness.</p>
@@ -1231,25 +1086,27 @@ Interpretability techniques such as LIME provide important insights into models,
 </li>
 <li id="fn18" class="footnote-item"><p>Technically, loss is the error on the training set, and risk is the error across the whole data distribution. With finite training data, minimizing the loss on the training set is a proxy for minimizing the risk. <a href="#fnref18" class="footnote-backref">↩︎</a></p>
 </li>
-<li id="fn19" class="footnote-item"><p>This example is given in <a href="https://arxiv.org/abs/1812.11806">An introduction to domain adaptation and transfer learning</a>, and an empirical study using transfer learning was reported in <a href="https://ieeexplore.ieee.org/document/6945865">Transfer Learning Improves Supervised Image Segmentation Across Imaging Protocols</a> <a href="#fnref19" class="footnote-backref">↩︎</a></p>
+<li id="fn19" class="footnote-item"><p>Imperfect interpretability results notwithstanding, using ResNet as a feature extractor is representative of how CV systems are used in the real world, and the resulting out-of-distribution performance improvements are impressive. <a href="#fnref19" class="footnote-backref">↩︎</a></p>
 </li>
-<li id="fn20" class="footnote-item"><p><a href="http://rpg.ifi.uzh.ch/docs/RAL16_Giusti.pdf">A Machine Learning Approach to Visual Perception of Forest Trails for Mobile Robots</a> <a href="#fnref20" class="footnote-backref">↩︎</a></p>
+<li id="fn20" class="footnote-item"><p>This example is given in <a href="https://arxiv.org/abs/1812.11806">An introduction to domain adaptation and transfer learning</a>, and an empirical study using transfer learning was reported in <a href="https://ieeexplore.ieee.org/document/6945865">Transfer Learning Improves Supervised Image Segmentation Across Imaging Protocols</a> <a href="#fnref20" class="footnote-backref">↩︎</a></p>
 </li>
-<li id="fn21" class="footnote-item"><p><a href="https://ieeexplore.ieee.org/document/8444585">Scaling Human Activity Recognition via Deep Learning-based Domain Adaptation</a> outlines the problem and some applications in this space. <a href="#fnref21" class="footnote-backref">↩︎</a></p>
+<li id="fn21" class="footnote-item"><p><a href="http://rpg.ifi.uzh.ch/docs/RAL16_Giusti.pdf">A Machine Learning Approach to Visual Perception of Forest Trails for Mobile Robots</a> <a href="#fnref21" class="footnote-backref">↩︎</a></p>
 </li>
-<li id="fn22" class="footnote-item"><p>See <a href="http://www.its.caltech.edu/~fehardt/UAI2016WS/papers/Liang.pdf">Causal Inference for Recommendation</a> and <a href="https://arxiv.org/abs/1808.06581">The Deconfounded Recommender: A Causal Inference Approach to Recommendation</a>. <a href="#fnref22" class="footnote-backref">↩︎</a></p>
+<li id="fn22" class="footnote-item"><p><a href="https://ieeexplore.ieee.org/document/8444585">Scaling Human Activity Recognition via Deep Learning-based Domain Adaptation</a> outlines the problem and some applications in this space. <a href="#fnref22" class="footnote-backref">↩︎</a></p>
 </li>
-<li id="fn23" class="footnote-item"><p><a href="https://arxiv.org/abs/1501.01332">Causal inference using invariant prediction: identification and confidence intervals</a> and <a href="https://arxiv.org/abs/1706.08576">Invariant Causal Prediction for Nonlinear Models</a>. <a href="#fnref23" class="footnote-backref">↩︎</a></p>
+<li id="fn23" class="footnote-item"><p>See <a href="http://www.its.caltech.edu/~fehardt/UAI2016WS/papers/Liang.pdf">Causal Inference for Recommendation</a> and <a href="https://arxiv.org/abs/1808.06581">The Deconfounded Recommender: A Causal Inference Approach to Recommendation</a>. <a href="#fnref23" class="footnote-backref">↩︎</a></p>
 </li>
-<li id="fn24" class="footnote-item"><p><a href="https://arxiv.org/abs/1505.07818">Domain adversarial training of neural networks</a> <a href="#fnref24" class="footnote-backref">↩︎</a></p>
+<li id="fn24" class="footnote-item"><p><a href="https://arxiv.org/abs/1501.01332">Causal inference using invariant prediction: identification and confidence intervals</a> and <a href="https://arxiv.org/abs/1706.08576">Invariant Causal Prediction for Nonlinear Models</a>. <a href="#fnref24" class="footnote-backref">↩︎</a></p>
 </li>
-<li id="fn25" class="footnote-item"><p><a href="https://arxiv.org/abs/1703.03400">Model-Agnostic Meta-Learning for Fast Adaptation of Deep Networks</a> <a href="#fnref25" class="footnote-backref">↩︎</a></p>
+<li id="fn25" class="footnote-item"><p><a href="https://arxiv.org/abs/1505.07818">Domain adversarial training of neural networks</a> <a href="#fnref25" class="footnote-backref">↩︎</a></p>
 </li>
-<li id="fn26" class="footnote-item"><p>There is a nice introduction to causal reinforcement learning in the paper <a href="http://gershmanlab.webfactional.com/pubs/RL_causal.pdf">Reinforcement learning and causal models</a>. The blog post <a href="https://causallu.com/2018/12/31/introduction-to-causalrl/">Introduction to Causal RL</a> contains a shorter description, and also suggests some medical applications. <a href="#fnref26" class="footnote-backref">↩︎</a></p>
+<li id="fn26" class="footnote-item"><p><a href="https://arxiv.org/abs/1703.03400">Model-Agnostic Meta-Learning for Fast Adaptation of Deep Networks</a> <a href="#fnref26" class="footnote-backref">↩︎</a></p>
 </li>
-<li id="fn27" class="footnote-item"><p>We are grateful to David Lopez-Paz (one of the <a href="https://arxiv.org/abs/1907.02893">Invariant Risk Minimization</a> authors) for sharing his thoughts and ideas about possible extensions and applications of IRM with us, including applications to RL. <a href="#fnref27" class="footnote-backref">↩︎</a></p>
+<li id="fn27" class="footnote-item"><p>There is a nice introduction to causal reinforcement learning in the paper <a href="http://gershmanlab.webfactional.com/pubs/RL_causal.pdf">Reinforcement learning and causal models</a>. The blog post <a href="https://causallu.com/2018/12/31/introduction-to-causalrl/">Introduction to Causal RL</a> contains a shorter description, and also suggests some medical applications. <a href="#fnref27" class="footnote-backref">↩︎</a></p>
 </li>
-<li id="fn28" class="footnote-item"><p>This idea was also suggested to us by David Lopez-Paz. <a href="#fnref28" class="footnote-backref">↩︎</a></p>
+<li id="fn28" class="footnote-item"><p>We are grateful to David Lopez-Paz (one of the <a href="https://arxiv.org/abs/1907.02893">Invariant Risk Minimization</a> authors) for sharing his thoughts and ideas about possible extensions and applications of IRM with us, including applications to RL. <a href="#fnref28" class="footnote-backref">↩︎</a></p>
+</li>
+<li id="fn29" class="footnote-item"><p>This idea was also suggested to us by David Lopez-Paz. <a href="#fnref29" class="footnote-backref">↩︎</a></p>
 </li>
 </ol>
 </section>
