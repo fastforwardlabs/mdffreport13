@@ -125,6 +125,26 @@ img {
   margin: 0 auto;
   page-break-inside: avoid;
 }
+code {
+  font-size: 0.9em;
+  line-height: 1.2;
+  background: rgba(0,0,0,0.125);
+  padding: 0 0.3em;
+}
+pre {
+  font-size: 0.9em;
+  line-height: 1.2;
+  background: rgba(0,0,0,0.125);
+  overflow-x: scroll;
+  max-width: 100%;
+  padding-left: 1ch;
+  padding-right: 1ch;
+  padding-top:0.625em;
+  padding-bottom:0.625em;
+}
+pre code {
+  background: transparent;
+}
 
 table {
   min-width: 100%;
@@ -240,7 +260,11 @@ function makeStyle() {
     li p:first-child {
       text-indent: 0;
     }
- 
+
+    #pdf-logo {
+      display: none;
+    }
+
    hr {
       margin: 0;
       border-top-color: black;
@@ -269,6 +293,9 @@ function makeStyle() {
   p:empty {
     display: none;
   }
+  ul, ol {
+  margin-bottom: 14px;
+  }
 
   #report-iso {
     display: none;
@@ -280,6 +307,7 @@ function makeStyle() {
  .table-of-contents ul {
     list-style: none;
     padding-left: 0;
+    margin-bottom: none;
   }
  .table-of-contents > ul {
     padding-bottom: ${rlh}px;
@@ -294,7 +322,7 @@ function makeStyle() {
  .table-of-contents > ul > li {
     font-weight: bold;
   }
- 
+
  .table-of-contents > ul > li > ul > li {
     font-weight: normal;
     font-style: normal;
@@ -354,7 +382,7 @@ h2 {
     content: "chapter " counter(chp);
     text-transform: uppercase;
   }
- 
+
   .toc-desktop-hidden .table-of-contents {
     width: auto;
   }
@@ -384,7 +412,7 @@ h2 {
       margin-left: 1ch;
       margin-right: 1ch;
     }
- 
+
   @media screen and (max-width: 1028px) {
     h1 {
       font-size: ${line * 1.75 * hf}px;
@@ -402,10 +430,14 @@ h2 {
       margin-top: ${lq}px;
       margin-bottom: ${lq}px;
     }
- 
+
     body {
       padding-left: 0;
       padding-top: ${lq * 6}px;
+    }
+    .content {
+        overflow-wrap: break-word;
+        word-wrap: break-word;
     }
     #contents-label {
       display: none;
@@ -426,7 +458,7 @@ h2 {
       z-index: 2;
       border-top: solid ${line * 1.5}px #aaa;
     }
- 
+
     .table-of-contents > ul {
       display: none;
     }
@@ -453,30 +485,7 @@ h2 {
       display: inline;
       position: relative;
     }
-   code {
-      font-family: "Plex Mono", monospace;
-      font-size: 16px;
-      background: rgba(0,0,0,0.125);
-      padding-top: 4px;
-      padding-bottom: 2px;
-      padding-left: 4px;
-      padding-right: 4px;
-   }
-   pre {
-      background: rgba(0,0,0,0.125);
-      font-size: 14px;
-      line-height: 1.25;
-      padding-left: 8px;
-      padding-right: 4px;
-      padding-top: 8px;
-      padding-bottom: 8px;
-   }
-    pre code {
-      background: transparent;
-      font-size: 13px;
-      line-height: 1.25;
-   }
- }
+  }
 }
 </style>`
 }
@@ -580,26 +589,48 @@ function makeJS() {
 
 function makeHead() {
   let title = 'Causality for Machine Learning'
-  let description = 'TODO'
+  let description =
+    'An online research report on causality for machine learning by Cloudera Fast Forward.'
   return `<head>
-    <meta charset="utf-8" />
+<meta charset="utf-8" />
 
-    <title>${title}</title>
-    <meta name="description" content="${description}" />
+<title>${title}</title>
+<meta name="description" content="${description}" />
 
-    <meta property="og:title" content="${title}" /> 
-    <meta property="og:description" content="${description}" />
-    <meta property="og:image" content="https://ff13.fastforwardlabs.com/ff13-share.jpg" />
-    <meta property="og:url" content="https://ff12.fastforwardlabs.com" />
-    <meta name="twitter:card" content="summary_large_image" />
-    
-    <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/x-icon" href="https://ff13.fastforwardlabs.com/favicon.ico" />
-    
-    ${makeStyle()}
-    ${makeJS()}
+<meta property="og:title" content="${title}" /> 
+<meta property="og:description" content="${description}" />
+<meta property="og:image" content="https://ff13.fastforwardlabs.com/causality.png" />
+<meta property="og:url" content="https://ff13.fastforwardlabs.com" />
+<meta name="twitter:card" content="summary_large_image" />
 
- </head>`
+<meta name="viewport" content="width=device-width" />
+<link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+${makeStyle()}
+${makeJS()}
+
+<!-- Google Analytics -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-157475426-4', 'auto');
+  ga('send', 'pageview');
+
+  window.addEventListener('load', function() {
+    document.getElementById('report-pdf-download').addEventListener('click', function() {
+      ga('send', {
+        hitType: 'pageview',
+        page: '/ff06-2020-interpretability.pdf'
+      });
+    });
+  })
+
+</script>
+<!-- End Google Analytics -->
+</head>`
 }
 
 function wrap(content) {
@@ -608,17 +639,16 @@ function wrap(content) {
       ${makeHead()}
       <body>
         <div class="content" style="position: relative;">
-          <div style="margin-top: ${line}px; line-height: 0; display: flex;">
+          <div id="html-logo" style="margin-top: ${line}px; line-height: 0; display: flex;">
             <a href="https://www.cloudera.com/products/fast-forward-labs-research.html"><img alt="Cloudera Fast Forward" style="display: block; height: 14px; margin-bottom: 7px;" src='/figures/cloudera-fast-forward-logo.png' /></a>
+          </div>
+          <div id="pdf-logo" style="margin-top: ${line}px; ">
+            <a href="https://www.cloudera.com/products/fast-forward-labs-research.html">Cloudera Fast Forward</a>
           </div>
           ${content}
         </div>
       </body>
-      <!-- TODO: Google Analytics -->
-      <script>
-     </script>
-      <!-- End Google Analytics -->
-    </html>
+   </html>
   `
 }
 
@@ -632,6 +662,7 @@ console.log(filenames)
 
 let report = ''
 for (let f = 0; f < filenames.length; f++) {
+  console.log(filenames[f])
   let content = fs.readFileSync(
     path.join(__dirname, 'src/') + filenames[f],
     'utf-8'

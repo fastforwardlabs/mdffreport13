@@ -1,21 +1,21 @@
 <!DOCTYPE html>
     <html lang="en">
       <head>
-    <meta charset="utf-8" />
+<meta charset="utf-8" />
 
-    <title>Causality for Machine Learning</title>
-    <meta name="description" content="TODO" />
+<title>Causality for Machine Learning</title>
+<meta name="description" content="An online research report on causality for machine learning by Cloudera Fast Forward." />
 
-    <meta property="og:title" content="Causality for Machine Learning" /> 
-    <meta property="og:description" content="TODO" />
-    <meta property="og:image" content="https://ff13.fastforwardlabs.com/ff13-share.jpg" />
-    <meta property="og:url" content="https://ff12.fastforwardlabs.com" />
-    <meta name="twitter:card" content="summary_large_image" />
-    
-    <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/x-icon" href="https://ff13.fastforwardlabs.com/favicon.ico" />
-    
-    <style type="text/css">
+<meta property="og:title" content="Causality for Machine Learning" /> 
+<meta property="og:description" content="An online research report on causality for machine learning by Cloudera Fast Forward." />
+<meta property="og:image" content="https://ff13.fastforwardlabs.com/causality.png" />
+<meta property="og:url" content="https://ff13.fastforwardlabs.com" />
+<meta name="twitter:card" content="summary_large_image" />
+
+<meta name="viewport" content="width=device-width" />
+<link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+<style type="text/css">
     
   @font-face {
     font-family: 'Plex Mono';
@@ -92,7 +92,11 @@
     li p:first-child {
       text-indent: 0;
     }
- 
+
+    #pdf-logo {
+      display: none;
+    }
+
    hr {
       margin: 0;
       border-top-color: black;
@@ -194,6 +198,26 @@ img {
   margin: 0 auto;
   page-break-inside: avoid;
 }
+code {
+  font-size: 0.9em;
+  line-height: 1.2;
+  background: rgba(0,0,0,0.125);
+  padding: 0 0.3em;
+}
+pre {
+  font-size: 0.9em;
+  line-height: 1.2;
+  background: rgba(0,0,0,0.125);
+  overflow-x: scroll;
+  max-width: 100%;
+  padding-left: 1ch;
+  padding-right: 1ch;
+  padding-top:0.625em;
+  padding-bottom:0.625em;
+}
+pre code {
+  background: transparent;
+}
 
 table {
   min-width: 100%;
@@ -244,6 +268,9 @@ table ul, table ol {
   p:empty {
     display: none;
   }
+  ul, ol {
+  margin-bottom: 14px;
+  }
 
   #report-iso {
     display: none;
@@ -255,6 +282,7 @@ table ul, table ol {
  .table-of-contents ul {
     list-style: none;
     padding-left: 0;
+    margin-bottom: none;
   }
  .table-of-contents > ul {
     padding-bottom: 28px;
@@ -269,7 +297,7 @@ table ul, table ol {
  .table-of-contents > ul > li {
     font-weight: bold;
   }
- 
+
  .table-of-contents > ul > li > ul > li {
     font-weight: normal;
     font-style: normal;
@@ -329,7 +357,7 @@ h2 {
     content: "chapter " counter(chp);
     text-transform: uppercase;
   }
- 
+
   .toc-desktop-hidden .table-of-contents {
     width: auto;
   }
@@ -359,7 +387,7 @@ h2 {
       margin-left: 1ch;
       margin-right: 1ch;
     }
- 
+
   @media screen and (max-width: 1028px) {
     h1 {
       font-size: 36.75px;
@@ -377,10 +405,14 @@ h2 {
       margin-top: 7px;
       margin-bottom: 7px;
     }
- 
+
     body {
       padding-left: 0;
       padding-top: 42px;
+    }
+    .content {
+        overflow-wrap: break-word;
+        word-wrap: break-word;
     }
     #contents-label {
       display: none;
@@ -401,7 +433,7 @@ h2 {
       z-index: 2;
       border-top: solid 42px #aaa;
     }
- 
+
     .table-of-contents > ul {
       display: none;
     }
@@ -428,33 +460,10 @@ h2 {
       display: inline;
       position: relative;
     }
-   code {
-      font-family: "Plex Mono", monospace;
-      font-size: 16px;
-      background: rgba(0,0,0,0.125);
-      padding-top: 4px;
-      padding-bottom: 2px;
-      padding-left: 4px;
-      padding-right: 4px;
-   }
-   pre {
-      background: rgba(0,0,0,0.125);
-      font-size: 14px;
-      line-height: 1.25;
-      padding-left: 8px;
-      padding-right: 4px;
-      padding-top: 8px;
-      padding-bottom: 8px;
-   }
-    pre code {
-      background: transparent;
-      font-size: 13px;
-      line-height: 1.25;
-   }
- }
+  }
 }
 </style>
-    <script>
+<script>
     function inViewport(elem) {
       let bounding = elem.getBoundingClientRect();
       return (
@@ -549,16 +558,43 @@ h2 {
     }, false);
   </script>
 
- </head>
+<!-- Google Analytics -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-157475426-4', 'auto');
+  ga('send', 'pageview');
+
+  window.addEventListener('load', function() {
+    document.getElementById('report-pdf-download').addEventListener('click', function() {
+      ga('send', {
+        hitType: 'pageview',
+        page: '/ff06-2020-interpretability.pdf'
+      });
+    });
+  })
+
+</script>
+<!-- End Google Analytics -->
+</head>
       <body>
         <div class="content" style="position: relative;">
-          <div style="margin-top: 28px; line-height: 0; display: flex;">
+          <div id="html-logo" style="margin-top: 28px; line-height: 0; display: flex;">
             <a href="https://www.cloudera.com/products/fast-forward-labs-research.html"><img alt="Cloudera Fast Forward" style="display: block; height: 14px; margin-bottom: 7px;" src='/figures/cloudera-fast-forward-logo.png' /></a>
+          </div>
+          <div id="pdf-logo" style="margin-top: 28px; ">
+            <a href="https://www.cloudera.com/products/fast-forward-labs-research.html">Cloudera Fast Forward</a>
           </div>
           <h1 id="causality-for-machine-learning">Causality for Machine Learning</h1>
 <p><div class="table-of-contents"><div id="toc-header" style="display: flex; font-weight: bold; text-transform: uppercase;">
      <div><button id="toggle_contents" style="padding-left: 0.5ch; padding-right: 0.5ch; cursor: pointer; position: relative; top: -1px;">☰</button><span id="contents-label" style="margin-left: 0;"> Contents</span></div>
   </div><ul><li><a href="#introduction">Introduction</a></li><li><a href="#background%3A-causal-inference">Background: Causal Inference</a><ul><li><a href="#why-are-we-interested-in-causal-inference%3F">Why are we interested in causal inference?</a></li><li><a href="#the-ladder-of-causation">The ladder of causation</a></li><li><a href="#from-correlation-to-causation">From correlation to causation</a></li><li><a href="#from-prediction-to-intervention">From prediction to intervention</a></li><li><a href="#how-do-we-know-which-graph-to-use%3F">How do we know which graph to use?</a></li><li><a href="#recap">Recap</a></li></ul></li><li><a href="#causality-and-invariance">Causality and invariance</a><ul><li><a href="#the-great-lie-of-machine-learning">The great lie of machine learning</a></li><li><a href="#dangers-of-spurious-correlations">Dangers of spurious correlations</a></li><li><a href="#invariance">Invariance</a></li><li><a href="#invariant-causal-prediction">Invariant Causal Prediction</a></li><li><a href="#invariant-risk-minimization">Invariant Risk Minimization</a></li><li><a href="#how-irm-works">How IRM works</a></li></ul></li><li><a href="#prototype">Prototype</a><ul><li><a href="#the-wildcam-dataset">The Wildcam dataset</a></li><li><a href="#experimental-set-up">Experimental set-up</a></li><li><a href="#results">Results</a></li></ul></li><li><a href="#landscape">Landscape</a><ul><li><a href="#use-cases">Use Cases</a></li><li><a href="#tools">Tools</a></li></ul></li><li><a href="#ethics">Ethics</a><ul><li><a href="#causal-graphs-make-assumptions-explicit">Causal graphs make assumptions explicit</a></li><li><a href="#omitting-protected-attributes-is-not-enough">Omitting protected attributes is not enough</a></li><li><a href="#invariance-as-a-route-to-fairness">Invariance as a route to fairness</a></li></ul></li><li><a href="#future">Future</a><ul><li><a href="#comparable-approaches">Comparable approaches</a></li><li><a href="#looking-ahead">Looking ahead</a></li></ul></li><li><a href="#conclusion">Conclusion</a></li></ul></div></p>
+<p>FF13 · <em>May 2020</em></p>
+<figure><img src="figures/ff13-cover-splash.png" alt="Causality for Machine Learning report cover"><figcaption>Causality for Machine Learning report cover</figcaption></figure>
+<p><em>This is an applied research report by <a href="https://www.cloudera.com/products/fast-forward-labs-research.html">Cloudera Fast Forward</a>. We write reports about emerging technologies.  Accompanying each report are working prototypes that exhibit the capabilities of the algorithm and offer detailed technical advice on its practical application. Read our full report on causality for machine learning below or <a href="/FF13-Causality_for_Machine_Learning-Cloudera_Fast_Forward.pdf" target="_blank" id="report-pdf-download">download the PDF</a>. Also be sure to check out the complementary prototype, <a href="https://scene.fastforwardlabs.com">Scene</a>.</em></p>
 <h2 id="introduction">Introduction</h2>
 <p>In recent years, machine learning has sufficiently advanced to provide novel capabilities, not least of which giving us sophisticated, computable representations of text and images. These capabilities have enabled new products, such as image search based on the image content, automatic translation between many languages and even synthesis of realistic images and voice. Simultaneously, machine learning has seen widespread adoption in the enterprise for classic use-cases, for instance, predicting customer churn, loan defaulting and manufacturing equipment failure. Where machine learning has been successful, it has been extraordinarily so.</p>
 <p>In many cases, that success can be attributed to supervised learning on large volumes of training data (combined with extensive computation). Broadly, supervised learning systems excel at one task: <em>prediction</em>. When the goal is to predict an outcome, and we have many examples of that outcome arising, and the features associated with it, we may turn to supervised learning.
@@ -1218,9 +1254,5 @@ Interpretability techniques such as LIME provide important insights into models,
 
         </div>
       </body>
-      <!-- TODO: Google Analytics -->
-      <script>
-     </script>
-      <!-- End Google Analytics -->
-    </html>
+   </html>
   
