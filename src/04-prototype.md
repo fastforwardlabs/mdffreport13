@@ -12,7 +12,7 @@ The iWildCam 2019 dataset (from The iWildCam 2019 Challenge Dataset) consists of
 
 ### Experimental set-up
 
-This set-up maps naturally to the environmental splits used in IRM. Each camera trap location is a distinct physical environment, which is roughly consistent, allowing for seasonal, weather and day/night patterns. No two environments are the same, though the camera locations are spread around roughly the same geographic region (the America Southwest).
+This set-up maps naturally to the environmental splits used in IRM. Each camera trap location is a distinct physical environment, which is roughly consistent, allowing for seasonal, weather and day/night patterns. No two environments are the same, though the camera locations are spread around roughly the same geographic region (the American Southwest).
 
 The objects of interest in the dataset are animals, which are basically invariant across environments: a raccoon looks like a raccoon in the mountains and in your backyard (though the particular raccoon may be different). The images are not split evenly between environments, since there is more animal activity in some places than others. Nor are the animal species evenly distributed among cameras. Some cameras will primarily produce images of one species or another, depending on the animals active in the area.
 

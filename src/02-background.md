@@ -81,7 +81,7 @@ By now, we hopefully agree that there is something to causality, and it has much
 
 #### Spurious correlations
 
-Very many things display correlation. The rooster crows when the sun rises.^[Some farm-experienced members of the CFF team are keen to point out that roosters crow pretty much _all the time_.] The lights turn off when you flick a switch. Global temperatures have risen alarmingly since the 1800s, and meanwhile pirate numbers have dwindled to almost nothing.^[See this article in [Forbes](https://www.forbes.com/sites/erikaandersen/2012/03/23/true-fact-the-lack-of-pirates-is-causing-global-warming/#5cb710453a67)] 
+Very many things display correlation. The rooster crows when the sun rises.^[Some farm-experienced members of the CFF team are keen to point out that roosters crow pretty much _all the time_.] The lights turn off when you flick a switch. Global temperatures have risen alarmingly since the 1800s, and meanwhile pirate numbers have dwindled to almost nothing.^[See this article in [Forbes](https://www.forbes.com/sites/erikaandersen/2012/03/23/true-fact-the-lack-of-pirates-is-causing-global-warming/#5cb710453a67).]
 
 These examples show us that while correlation can _appear_ as a result of causation, as in the case of the light switch, correlation certainly does not always _imply_ causation, as in the case of the pirates.
 
@@ -89,7 +89,7 @@ Correlated things are not always related.^[On a technical note, correlation meas
 
 ![Figure source: [Spurious Correlations](https://www.tylervigen.com/spurious-correlations).](figures/spurious-correlation.png)
 
-In real world systems, spurious correlations can be cause for serious ethical concerns. For instance, certain characteristics may be associated with individuals or minority groups, but these particular characteristics are not important to our model. However, the model weights them as important during a learning task. This can easily embed bias and unfairness into an algorithm based on spurious correlations in a given dataset.
+In real world systems, spurious correlations can be cause for serious ethical concerns. For instance, certain characteristics may be spuriously associated with individuals or minority groups, and these characteristics may be highly predictive. As such, the model weights them as important during a learning task. This can easily embed bias and unfairness into an algorithm based on the spurious correlations in a given dataset.
 
 #### The Principle of Common Cause
 
@@ -242,7 +242,7 @@ With some common sense, we can see that a causal interpretation is not appropria
 
 The model can only tell us what **statistical dependencies** exist in the dataset we trained it on. The training dataset was purely observational - a snapshot of a window of time with observations about those customers in it. If we select "give the customer access to tech support" in the app, the model can tell us that similar customers who also had access to tech support were less likely to churn. Our model only captures information about customers who happened to have some combination of features. It does not capture information about what happens when we _change_ a customer's features. This is an important distinction.
 
-To know what would happen when we intervene to change a feature, we must compute the interventional distribution (or a point prediction), which can be very different from the observational distribution. In the case of churn, it’s likely the true causal graph is rather complex. 
+To know what would happen when we intervene to change a feature, we must compute the interventional distribution (or a point prediction), which can be very different from the observational distribution. In the case of churn, it’s likely the true causal graph is rather complex.
 
 Interpretability techniques such as LIME provide important insights into models, but they are not causal insights. To make good decisions using the output of any interpretability method, we need to combine it with causal knowledge.
 
@@ -250,11 +250,11 @@ Often, this causal knowledge is not formally specified in a graph, and we simply
 
 ![](figures/ff13-11.png)
 
-Constructing a useful causal model of churn is a complex undertaking, requiring both deep domain knowledge and a detailed technical understanding of causal inference.^[ Alas, it requires a far more detailed technical knowledge than we can provide in this report. We recommend the textbook [Causal Inference in Statistics: A Primer](http://bayes.cs.ucla.edu/PRIMER/) for a succinct introduction to Structural Causal Models. An abbreviated overview, ([Causal Inference in Statistics: An Overview](https://ftp.cs.ucla.edu/pub/stat_ser/r350.pdf)) is freely available as a PDF. The textbook [Elements of Causal Inference](https://mitpress.mit.edu/books/elements-causal-inference) (available through Open Access) also covers structural causal models, with additional links to machine learning.] In Chapter 3, we will discuss some techniques that are bridging the gap between a full causal model and the supervised learning setup we use in problems like churn prediction.
+Constructing a useful causal model of churn is a complex undertaking, requiring both deep domain knowledge and a detailed technical understanding of causal inference.^[Alas, it requires a far more detailed technical knowledge than we can provide in this report. We recommend the textbook [Causal Inference in Statistics: A Primer](http://bayes.cs.ucla.edu/PRIMER/) for a succinct introduction to Structural Causal Models. An abbreviated overview, ([Causal Inference in Statistics: An Overview](https://ftp.cs.ucla.edu/pub/stat_ser/r350.pdf)) is freely available as a PDF. The textbook [Elements of Causal Inference](https://mitpress.mit.edu/books/elements-causal-inference) (available through Open Access) also covers structural causal models, and includes several chapters explicitly drawing connections between causal inference and machine learning.] In [Causality and invariance](#causality-and-invariance), we will discuss some techniques that are bridging the gap between a full causal model and the supervised learning setup we use in problems like churn prediction.
 
 #### When do we need interventions?
 
-When do we need to concern ourselves with intervention and causality? If all we want to do is predict, and to do so with high accuracy (or whatever model performance metric we care about), then we should use everything at our disposal to do so. That means making use of all the variables that may correlate with the outcome we’re trying to predict, and it doesn’t matter that they don’t cause the outcome. Correlation is not causation, but correlation is still predictive,^[We will examine the nuances of this statement in the next chapter. Correlation is predictive in distribution.] and supervised learning excels at discovering subtle correlations.
+When do we need to concern ourselves with intervention and causality? If all we want to do is predict, and to do so with high accuracy (or whatever model performance metric we care about), then we should use everything at our disposal to do so. That means making use of all the variables that may correlate with the outcome we’re trying to predict, and it doesn’t matter that they don’t cause the outcome. Correlation is not causation, but correlation is still predictive,^[We will examine the nuances of this statement in [Causality and invariance](#causality-and-invariance). Correlation is predictive _in distribution_.] and supervised learning excels at discovering subtle correlations.
 
 Some situations in which this pure supervised learning approach is useful:
 - We want to predict when a machine in our factory will fail.
