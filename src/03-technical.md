@@ -1,4 +1,4 @@
-## Causality and invariance
+## Causality and Invariance
 
 Supervised machine learning is very good at prediction, but there are useful lessons we can take from causal models even for purely predictive problems.
 
