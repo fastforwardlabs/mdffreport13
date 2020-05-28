@@ -1,6 +1,6 @@
 ## Background: Causal Inference
 
-In this chapter, we discuss the essentials of causal reasoning (particularly in how it differs from supervised learning) and give an informal introduction to structural causal models. Grasping the basic notions of causal modeling allows for a much richer understanding of invariance and generalization, which we discuss in the next chapter, [Causality and invariance](#causality-and-invariance).
+In this chapter, we discuss the essentials of causal reasoning (particularly in how it differs from supervised learning) and give an informal introduction to structural causal models. Grasping the basic notions of causal modeling allows for a much richer understanding of invariance and generalization, which we discuss in the next chapter, [Causality and Invariance](#causality-and-invariance).
 
 ### Why are we interested in causal inference?
 
@@ -250,7 +250,7 @@ Often, this causal knowledge is not formally specified in a graph, and we simply
 
 ![](figures/ff13-11.png)
 
-Constructing a useful causal model of churn is a complex undertaking, requiring both deep domain knowledge and a detailed technical understanding of causal inference.^[Alas, it requires a far more detailed technical knowledge than we can provide in this report. We recommend the textbook [Causal Inference in Statistics: A Primer](http://bayes.cs.ucla.edu/PRIMER/) for a succinct introduction to Structural Causal Models. An abbreviated overview, ([Causal Inference in Statistics: An Overview](https://ftp.cs.ucla.edu/pub/stat_ser/r350.pdf)) is freely available as a PDF. The textbook [Elements of Causal Inference](https://mitpress.mit.edu/books/elements-causal-inference) (available through Open Access) also covers structural causal models, and includes several chapters explicitly drawing connections between causal inference and machine learning.] In [Causality and invariance](#causality-and-invariance), we will discuss some techniques that are bridging the gap between a full causal model and the supervised learning setup we use in problems like churn prediction.
+Constructing a useful causal model of churn is a complex undertaking, requiring both deep domain knowledge and a detailed technical understanding of causal inference.^[Alas, it requires a far more detailed technical knowledge than we can provide in this report. We recommend the textbook [Causal Inference in Statistics: A Primer](http://bayes.cs.ucla.edu/PRIMER/) for a succinct introduction to Structural Causal Models. An abbreviated overview, ([Causal Inference in Statistics: An Overview](https://ftp.cs.ucla.edu/pub/stat_ser/r350.pdf)) is freely available as a PDF. The textbook [Elements of Causal Inference](https://mitpress.mit.edu/books/elements-causal-inference) (available through Open Access) also covers structural causal models, and includes several chapters explicitly drawing connections between causal inference and machine learning.] In [Causality and Invariance](#causality-and-invariance), we will discuss some techniques that are bridging the gap between a full causal model and the supervised learning setup we use in problems like churn prediction.
 
 #### When do we need interventions?
 
@@ -289,7 +289,7 @@ The validity of the results depends on the validity of the assumptions. Of cours
 One case in which we may be able to write down the true causal graph is when we have ourselves created the system. For instance, a manufacturing line may have a sufficiently deterministic process that makes it possible to write down a precise graph encoding which parts move from which machine to another. If we were to model the production of faulty parts, that graph would be a good basis for the causal graph, since a machine that has not processed a given faulty part is unlikely to be responsible for the fault, and causal graphs encode exactly these independences.
 
 
-### Recap
+### TL;DR
 
 Causal graphical models present an intuitive and powerful means of reasoning about systems. If an application requires only pure prediction, this reasoning is not necessary, and we may apply supervised learning to exploit subtle correlations between variables and our predicted quantity of interest. However, when a prediction will be used to inform a decision that changes the system, or we want to predict for the system under intervention, we *must* reason causally  - or else likely draw incorrect conclusions. That said, behind every causal conclusion there is always a causal assumption that cannot be tested or verified by mere observation.
 
