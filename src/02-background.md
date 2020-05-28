@@ -1,6 +1,6 @@
 ## Background: Causal Inference
 
-In this chapter, we discuss the essentials of causal reasoning (particularly in how it differs from supervised learning) and give an informal introduction to structural causal models. Grasping the basic notions of causal modeling allows for a much richer understanding of invariance and generalization, which we discuss in the next chapter.
+In this chapter, we discuss the essentials of causal reasoning (particularly in how it differs from supervised learning) and give an informal introduction to structural causal models. Grasping the basic notions of causal modeling allows for a much richer understanding of invariance and generalization, which we discuss in the next chapter, [Causality and invariance](#causality-and-invariance).
 
 ### Why are we interested in causal inference?
 
