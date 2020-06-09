@@ -177,7 +177,7 @@ def sample():
 
 Each of the variables has an independent random noise associated with it, arising from factors not modeled by the graph. These distributions need not be identical, but must be independent. Notice that the structure of the graph encodes the dependencies between variables, which we see as the function signatures. The values of `x` and `y` are independent, but `z` depends on both. We can also see clearly that the model defines a generative process for the data, since we can easily sample from the joint distribution by calling the `sample` function. Doing so repeatedly allows us to chart the joint distribution, and see that `x` and `y` are indeed independent; there’s no apparent correlation in the scatter chart.
 
-![Left: Histograms of the observational distributions of x, y and z. Right: Scatter plot of the observational joint distribution of x and y. Since x and y are not causally connected except through the collider z, they are completely uncorrelated.](figures/scm-intervened.png)
+![Left: Histograms of the observational distributions of x, y and z. Right: Scatter plot of the observational joint distribution of x and y. Since x and y are not causally connected except through the collider z, they are completely uncorrelated.](figures/scm-observed.png)
 
 Now that we have a model in code, we can see a selection bias effect. If we condition the data to only values of `z` (the collider node) greater than a cutoff (which we can do easily, if inefficiently, by filtering the samples to those where `z > 2.5`), the previously independent `x` and `y` become negatively correlated.
 
